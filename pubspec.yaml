@@ -1,6 +1,6 @@
 name: connector_api
 description: Dart bindings for connector protobuffers
-version: 0.0.1
+version: 0.0.2
 author: raf924
 
 environment:

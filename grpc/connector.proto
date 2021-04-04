@@ -12,4 +12,5 @@ service Connector {
   rpc ReadCommands(google.protobuf.Empty) returns(stream packets.CommandPacket) {}
   rpc ReadUserEvents(google.protobuf.Empty) returns(stream packets.UserPacket) {}
   rpc SendMessage(packets.BotPacket) returns(google.protobuf.Empty) {}
+  rpc Ping(google.protobuf.Empty) returns(google.protobuf.Empty) {}
 }

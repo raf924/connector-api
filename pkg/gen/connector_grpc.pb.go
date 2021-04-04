@@ -24,6 +24,7 @@ type ConnectorClient interface {
 	ReadCommands(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (Connector_ReadCommandsClient, error)
 	ReadUserEvents(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (Connector_ReadUserEventsClient, error)
 	SendMessage(ctx context.Context, in *BotPacket, opts ...grpc.CallOption) (*empty.Empty, error)
+	Ping(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type connectorClient struct {
@@ -148,6 +149,15 @@ func (c *connectorClient) SendMessage(ctx context.Context, in *BotPacket, opts .
 	return out, nil
 }
 
+func (c *connectorClient) Ping(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/connector.Connector/Ping", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ConnectorServer is the server API for Connector service.
 // All implementations must embed UnimplementedConnectorServer
 // for forward compatibility
@@ -157,6 +167,7 @@ type ConnectorServer interface {
 	ReadCommands(*empty.Empty, Connector_ReadCommandsServer) error
 	ReadUserEvents(*empty.Empty, Connector_ReadUserEventsServer) error
 	SendMessage(context.Context, *BotPacket) (*empty.Empty, error)
+	Ping(context.Context, *empty.Empty) (*empty.Empty, error)
 	mustEmbedUnimplementedConnectorServer()
 }
 
@@ -178,6 +189,9 @@ func (UnimplementedConnectorServer) ReadUserEvents(*empty.Empty, Connector_ReadU
 }
 func (UnimplementedConnectorServer) SendMessage(context.Context, *BotPacket) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
+}
+func (UnimplementedConnectorServer) Ping(context.Context, *empty.Empty) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
 func (UnimplementedConnectorServer) mustEmbedUnimplementedConnectorServer() {}
 
@@ -291,6 +305,24 @@ func _Connector_SendMessage_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Connector_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectorServer).Ping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/connector.Connector/Ping",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectorServer).Ping(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Connector_ServiceDesc is the grpc.ServiceDesc for Connector service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -305,6 +337,10 @@ var Connector_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendMessage",
 			Handler:    _Connector_SendMessage_Handler,
+		},
+		{
+			MethodName: "Ping",
+			Handler:    _Connector_Ping_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

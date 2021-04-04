@@ -37,6 +37,10 @@ class ConnectorClient extends $grpc.Client {
       '/connector.Connector/SendMessage',
       ($0.BotPacket value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $1.Empty.fromBuffer(value));
+  static final _$ping = $grpc.ClientMethod<$1.Empty, $1.Empty>(
+      '/connector.Connector/Ping',
+      ($1.Empty value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $1.Empty.fromBuffer(value));
 
   ConnectorClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
@@ -73,6 +77,11 @@ class ConnectorClient extends $grpc.Client {
   $grpc.ResponseFuture<$1.Empty> sendMessage($0.BotPacket request,
       {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$sendMessage, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$1.Empty> ping($1.Empty request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$ping, request, options: options);
   }
 }
 
@@ -117,6 +126,13 @@ abstract class ConnectorServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.BotPacket.fromBuffer(value),
         ($1.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$1.Empty, $1.Empty>(
+        'Ping',
+        ping_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $1.Empty.fromBuffer(value),
+        ($1.Empty value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.ConfirmationPacket> register_Pre($grpc.ServiceCall call,
@@ -144,6 +160,11 @@ abstract class ConnectorServiceBase extends $grpc.Service {
     return sendMessage(call, await request);
   }
 
+  $async.Future<$1.Empty> ping_Pre(
+      $grpc.ServiceCall call, $async.Future<$1.Empty> request) async {
+    return ping(call, await request);
+  }
+
   $async.Future<$0.ConfirmationPacket> register(
       $grpc.ServiceCall call, $0.RegistrationPacket request);
   $async.Stream<$0.MessagePacket> readMessages(
@@ -154,4 +175,5 @@ abstract class ConnectorServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $1.Empty request);
   $async.Future<$1.Empty> sendMessage(
       $grpc.ServiceCall call, $0.BotPacket request);
+  $async.Future<$1.Empty> ping($grpc.ServiceCall call, $1.Empty request);
 }
