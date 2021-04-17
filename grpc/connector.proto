@@ -3,6 +3,10 @@ package connector;
 
 option go_package = "github.com/raf924/connector-api/pkg/gen";
 
+option java_multiple_files=true;
+option java_package = "tech.raf924.connectorapi";
+option java_outer_classname = "ConnectorProto";
+
 import "packets.proto";
 import "google/protobuf/empty.proto";
 

@@ -1,6 +1,8 @@
 syntax = "proto3";
 option go_package = "github.com/raf924/connector-api/pkg/gen";
 package command;
+option java_multiple_files=true;
+option java_package = "tech.raf924.connectorapi";
 
 message Command {
   string name = 1;
