@@ -28,52 +28,69 @@ plugins {
 
 group = "tech.raf924"
 version = "1.0-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.targetCompatibility = JavaVersion.VERSION_1_8
+
 
 var grpcVersion = "1.37.0"
+var protobufVersion = "3.15.8"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
+    implementation(kotlin("stdlib-jdk8"))
+    implementation("javax.annotation:javax.annotation-api:1.3.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("io.grpc:grpc-all:$grpcVersion")
-    compileOnly("javax.annotation:javax.annotation-api:1.3.2")
-    api("io.grpc:grpc-kotlin-stub:1.0.0")
-    implementation("io.grpc:protoc-gen-grpc-kotlin:1.0.0")
+
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-    implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.13")
+
+    api("com.google.protobuf:protobuf-javalite:$protobufVersion")
+    api("io.grpc:grpc-kotlin-stub-lite:1.0.0")
 }
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
 }
 
-tasks.getByName("clean") {
-    //delete("src/main/generated")
+tasks.configureEach {
+    if (name.matches(Regex("^extractInclude([A-Za-z]+)TestProto$"))) {
+        enabled = false
+    }
 }
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.15.8"
+        artifact = "com.google.protobuf:protoc:$protobufVersion"
+    }
+    plugins {
+        id("java")
     }
     plugins {
         id("grpc") {
             artifact = "io.grpc:protoc-gen-grpc-java:$grpcVersion"
         }
         id("grpckt") {
-            artifact = "io.grpc:protoc-gen-grpc-kotlin:0.1.5"
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.0.0:jdk7@jar"
         }
     }
     generateProtoTasks {
-        all().forEach {
+        ofSourceSet("main").forEach {
+            it.builtins {
+                remove("java")
+            }
             it.plugins {
-                id("grpc")
-                id("grpckt")
+                id("java") {
+                    option("lite")
+                }
+                id("grpc"){
+                    option("lite")
+                }
+                id("grpckt"){
+                    option("lite")
+                }
             }
         }
     }
