@@ -31,8 +31,10 @@ plugins {
     java
     kotlin("jvm") version "1.4.32"
     id("com.google.protobuf") version "0.8.15"
-    id("maven-publish")
+    `maven-publish`
 }
+
+apply(plugin = "maven")
 
 group = "tech.raf924"
 version = "1.0-SNAPSHOT"
