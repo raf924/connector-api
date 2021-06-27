@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConnectorClient interface {
+	Connect(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 	Register(ctx context.Context, in *RegistrationPacket, opts ...grpc.CallOption) (*ConfirmationPacket, error)
 	ReadMessages(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (Connector_ReadMessagesClient, error)
 	ReadCommands(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (Connector_ReadCommandsClient, error)
@@ -33,6 +34,15 @@ type connectorClient struct {
 
 func NewConnectorClient(cc grpc.ClientConnInterface) ConnectorClient {
 	return &connectorClient{cc}
+}
+
+func (c *connectorClient) Connect(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/connector.Connector/Connect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *connectorClient) Register(ctx context.Context, in *RegistrationPacket, opts ...grpc.CallOption) (*ConfirmationPacket, error) {
@@ -162,6 +172,7 @@ func (c *connectorClient) Ping(ctx context.Context, in *empty.Empty, opts ...grp
 // All implementations must embed UnimplementedConnectorServer
 // for forward compatibility
 type ConnectorServer interface {
+	Connect(context.Context, *empty.Empty) (*empty.Empty, error)
 	Register(context.Context, *RegistrationPacket) (*ConfirmationPacket, error)
 	ReadMessages(*empty.Empty, Connector_ReadMessagesServer) error
 	ReadCommands(*empty.Empty, Connector_ReadCommandsServer) error
@@ -175,6 +186,9 @@ type ConnectorServer interface {
 type UnimplementedConnectorServer struct {
 }
 
+func (UnimplementedConnectorServer) Connect(context.Context, *empty.Empty) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Connect not implemented")
+}
 func (UnimplementedConnectorServer) Register(context.Context, *RegistrationPacket) (*ConfirmationPacket, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
@@ -204,6 +218,24 @@ type UnsafeConnectorServer interface {
 
 func RegisterConnectorServer(s grpc.ServiceRegistrar, srv ConnectorServer) {
 	s.RegisterService(&Connector_ServiceDesc, srv)
+}
+
+func _Connector_Connect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectorServer).Connect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/connector.Connector/Connect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectorServer).Connect(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Connector_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -330,6 +362,10 @@ var Connector_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "connector.Connector",
 	HandlerType: (*ConnectorServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Connect",
+			Handler:    _Connector_Connect_Handler,
+		},
 		{
 			MethodName: "Register",
 			Handler:    _Connector_Register_Handler,
