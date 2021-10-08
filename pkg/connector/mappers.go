@@ -405,3 +405,19 @@ func MapDTOToUser(recipient User) *domain.User {
 	}
 	return domain.NewUser(nick, id, MapToRole(recipient.Role()))
 }
+
+func MapDTOToConfirmationMessage(packet ConfirmationPacket) *domain.ConfirmationMessage {
+	user, err := packet.BotUser()
+	if err != nil {
+		return nil
+	}
+	users, err := packet.Users()
+	if err != nil {
+		return nil
+	}
+	trigger, err := packet.Trigger()
+	if err != nil {
+		return nil
+	}
+	return domain.NewConfirmationMessage(MapDTOToUser(user), trigger, MapDTOToUsers(users))
+}
