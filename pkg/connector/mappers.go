@@ -169,9 +169,13 @@ func mapTimeToTimestamp(time time.Time, timestamp *Timestamp) error {
 	return nil
 }
 
-func CreateConfirmationPacket(botUser *domain.User, users []*domain.User, confirmationPacket *ConfirmationPacket) error {
+func CreateConfirmationPacket(botUser *domain.User, trigger string, users []*domain.User, confirmationPacket *ConfirmationPacket) error {
 	botUserDTO, _ := confirmationPacket.NewBotUser()
 	err := MapUserToDTO(botUser, &botUserDTO)
+	if err != nil {
+		return err
+	}
+	err = confirmationPacket.SetTrigger(trigger)
 	if err != nil {
 		return err
 	}
