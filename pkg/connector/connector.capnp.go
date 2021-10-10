@@ -3,136 +3,136 @@
 package connector
 
 import (
-	context "golang.org/x/net/context"
-	capnp "zombiezen.com/go/capnproto2"
-	text "zombiezen.com/go/capnproto2/encoding/text"
-	schemas "zombiezen.com/go/capnproto2/schemas"
-	server "zombiezen.com/go/capnproto2/server"
+	capnp "capnproto.org/go/capnp/v3"
+	text "capnproto.org/go/capnp/v3/encoding/text"
+	schemas "capnproto.org/go/capnp/v3/schemas"
+	server "capnproto.org/go/capnp/v3/server"
+	context "context"
 )
 
-type Connector struct{ Client capnp.Client }
+type Connector struct{ Client *capnp.Client }
 
 // Connector_TypeID is the unique identifier for the type Connector.
 const Connector_TypeID = 0xc33ee7505f042b8e
 
-func (c Connector) Register(ctx context.Context, params func(Connector_register_Params) error, opts ...capnp.CallOption) Connector_register_Results_Promise {
-	if c.Client == nil {
-		return Connector_register_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
-	}
-	call := &capnp.Call{
-		Ctx: ctx,
+func (c Connector) Register(ctx context.Context, params func(Connector_register_Params) error) (Connector_register_Results_Future, capnp.ReleaseFunc) {
+	s := capnp.Send{
 		Method: capnp.Method{
 			InterfaceID:   0xc33ee7505f042b8e,
 			MethodID:      0,
 			InterfaceName: "connector.capnp:Connector",
 			MethodName:    "register",
 		},
-		Options: capnp.NewCallOptions(opts),
 	}
 	if params != nil {
-		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		call.ParamsFunc = func(s capnp.Struct) error { return params(Connector_register_Params{Struct: s}) }
+		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
+		s.PlaceArgs = func(s capnp.Struct) error { return params(Connector_register_Params{Struct: s}) }
 	}
-	return Connector_register_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+	ans, release := c.Client.SendCall(ctx, s)
+	return Connector_register_Results_Future{Future: ans.Future()}, release
 }
-func (c Connector) Send(ctx context.Context, params func(Connector_send_Params) error, opts ...capnp.CallOption) Connector_send_Results_Promise {
-	if c.Client == nil {
-		return Connector_send_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
-	}
-	call := &capnp.Call{
-		Ctx: ctx,
+func (c Connector) Send(ctx context.Context, params func(Connector_send_Params) error) (Connector_send_Results_Future, capnp.ReleaseFunc) {
+	s := capnp.Send{
 		Method: capnp.Method{
 			InterfaceID:   0xc33ee7505f042b8e,
 			MethodID:      1,
 			InterfaceName: "connector.capnp:Connector",
 			MethodName:    "send",
 		},
-		Options: capnp.NewCallOptions(opts),
 	}
 	if params != nil {
-		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		call.ParamsFunc = func(s capnp.Struct) error { return params(Connector_send_Params{Struct: s}) }
+		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
+		s.PlaceArgs = func(s capnp.Struct) error { return params(Connector_send_Params{Struct: s}) }
 	}
-	return Connector_send_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+	ans, release := c.Client.SendCall(ctx, s)
+	return Connector_send_Results_Future{Future: ans.Future()}, release
 }
-func (c Connector) MessageStream(ctx context.Context, params func(Connector_messageStream_Params) error, opts ...capnp.CallOption) Connector_messageStream_Results_Promise {
-	if c.Client == nil {
-		return Connector_messageStream_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
-	}
-	call := &capnp.Call{
-		Ctx: ctx,
+func (c Connector) MessageStream(ctx context.Context, params func(Connector_messageStream_Params) error) (Connector_messageStream_Results_Future, capnp.ReleaseFunc) {
+	s := capnp.Send{
 		Method: capnp.Method{
 			InterfaceID:   0xc33ee7505f042b8e,
 			MethodID:      2,
 			InterfaceName: "connector.capnp:Connector",
 			MethodName:    "messageStream",
 		},
-		Options: capnp.NewCallOptions(opts),
 	}
 	if params != nil {
-		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		call.ParamsFunc = func(s capnp.Struct) error { return params(Connector_messageStream_Params{Struct: s}) }
+		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
+		s.PlaceArgs = func(s capnp.Struct) error { return params(Connector_messageStream_Params{Struct: s}) }
 	}
-	return Connector_messageStream_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+	ans, release := c.Client.SendCall(ctx, s)
+	return Connector_messageStream_Results_Future{Future: ans.Future()}, release
 }
-func (c Connector) CommandStream(ctx context.Context, params func(Connector_commandStream_Params) error, opts ...capnp.CallOption) Connector_commandStream_Results_Promise {
-	if c.Client == nil {
-		return Connector_commandStream_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
-	}
-	call := &capnp.Call{
-		Ctx: ctx,
+func (c Connector) CommandStream(ctx context.Context, params func(Connector_commandStream_Params) error) (Connector_commandStream_Results_Future, capnp.ReleaseFunc) {
+	s := capnp.Send{
 		Method: capnp.Method{
 			InterfaceID:   0xc33ee7505f042b8e,
 			MethodID:      3,
 			InterfaceName: "connector.capnp:Connector",
 			MethodName:    "commandStream",
 		},
-		Options: capnp.NewCallOptions(opts),
 	}
 	if params != nil {
-		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		call.ParamsFunc = func(s capnp.Struct) error { return params(Connector_commandStream_Params{Struct: s}) }
+		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
+		s.PlaceArgs = func(s capnp.Struct) error { return params(Connector_commandStream_Params{Struct: s}) }
 	}
-	return Connector_commandStream_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+	ans, release := c.Client.SendCall(ctx, s)
+	return Connector_commandStream_Results_Future{Future: ans.Future()}, release
 }
-func (c Connector) EventStream(ctx context.Context, params func(Connector_eventStream_Params) error, opts ...capnp.CallOption) Connector_eventStream_Results_Promise {
-	if c.Client == nil {
-		return Connector_eventStream_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
-	}
-	call := &capnp.Call{
-		Ctx: ctx,
+func (c Connector) EventStream(ctx context.Context, params func(Connector_eventStream_Params) error) (Connector_eventStream_Results_Future, capnp.ReleaseFunc) {
+	s := capnp.Send{
 		Method: capnp.Method{
 			InterfaceID:   0xc33ee7505f042b8e,
 			MethodID:      4,
 			InterfaceName: "connector.capnp:Connector",
 			MethodName:    "eventStream",
 		},
-		Options: capnp.NewCallOptions(opts),
 	}
 	if params != nil {
-		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		call.ParamsFunc = func(s capnp.Struct) error { return params(Connector_eventStream_Params{Struct: s}) }
+		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
+		s.PlaceArgs = func(s capnp.Struct) error { return params(Connector_eventStream_Params{Struct: s}) }
 	}
-	return Connector_eventStream_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+	ans, release := c.Client.SendCall(ctx, s)
+	return Connector_eventStream_Results_Future{Future: ans.Future()}, release
 }
 
+func (c Connector) AddRef() Connector {
+	return Connector{
+		Client: c.Client.AddRef(),
+	}
+}
+
+func (c Connector) Release() {
+	c.Client.Release()
+}
+
+// A Connector_Server is a Connector with a local implementation.
 type Connector_Server interface {
-	Register(Connector_register) error
+	Register(context.Context, Connector_register) error
 
-	Send(Connector_send) error
+	Send(context.Context, Connector_send) error
 
-	MessageStream(Connector_messageStream) error
+	MessageStream(context.Context, Connector_messageStream) error
 
-	CommandStream(Connector_commandStream) error
+	CommandStream(context.Context, Connector_commandStream) error
 
-	EventStream(Connector_eventStream) error
+	EventStream(context.Context, Connector_eventStream) error
 }
 
-func Connector_ServerToClient(s Connector_Server) Connector {
-	c, _ := s.(server.Closer)
-	return Connector{Client: server.New(Connector_Methods(nil, s), c)}
+// Connector_NewServer creates a new Server from an implementation of Connector_Server.
+func Connector_NewServer(s Connector_Server, policy *server.Policy) *server.Server {
+	c, _ := s.(server.Shutdowner)
+	return server.New(Connector_Methods(nil, s), s, c, policy)
 }
 
+// Connector_ServerToClient creates a new Client from an implementation of Connector_Server.
+// The caller is responsible for calling Release on the returned Client.
+func Connector_ServerToClient(s Connector_Server, policy *server.Policy) Connector {
+	return Connector{Client: capnp.NewClient(Connector_NewServer(s, policy))}
+}
+
+// Connector_Methods appends Methods to a slice that invoke the methods on s.
+// This can be used to create a more complicated Server.
 func Connector_Methods(methods []server.Method, s Connector_Server) []server.Method {
 	if cap(methods) == 0 {
 		methods = make([]server.Method, 0, 5)
@@ -145,11 +145,9 @@ func Connector_Methods(methods []server.Method, s Connector_Server) []server.Met
 			InterfaceName: "connector.capnp:Connector",
 			MethodName:    "register",
 		},
-		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
-			call := Connector_register{c, opts, Connector_register_Params{Struct: p}, Connector_register_Results{Struct: r}}
-			return s.Register(call)
+		Impl: func(ctx context.Context, call *server.Call) error {
+			return s.Register(ctx, Connector_register{call})
 		},
-		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 1},
 	})
 
 	methods = append(methods, server.Method{
@@ -159,11 +157,9 @@ func Connector_Methods(methods []server.Method, s Connector_Server) []server.Met
 			InterfaceName: "connector.capnp:Connector",
 			MethodName:    "send",
 		},
-		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
-			call := Connector_send{c, opts, Connector_send_Params{Struct: p}, Connector_send_Results{Struct: r}}
-			return s.Send(call)
+		Impl: func(ctx context.Context, call *server.Call) error {
+			return s.Send(ctx, Connector_send{call})
 		},
-		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 0},
 	})
 
 	methods = append(methods, server.Method{
@@ -173,11 +169,9 @@ func Connector_Methods(methods []server.Method, s Connector_Server) []server.Met
 			InterfaceName: "connector.capnp:Connector",
 			MethodName:    "messageStream",
 		},
-		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
-			call := Connector_messageStream{c, opts, Connector_messageStream_Params{Struct: p}, Connector_messageStream_Results{Struct: r}}
-			return s.MessageStream(call)
+		Impl: func(ctx context.Context, call *server.Call) error {
+			return s.MessageStream(ctx, Connector_messageStream{call})
 		},
-		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 0},
 	})
 
 	methods = append(methods, server.Method{
@@ -187,11 +181,9 @@ func Connector_Methods(methods []server.Method, s Connector_Server) []server.Met
 			InterfaceName: "connector.capnp:Connector",
 			MethodName:    "commandStream",
 		},
-		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
-			call := Connector_commandStream{c, opts, Connector_commandStream_Params{Struct: p}, Connector_commandStream_Results{Struct: r}}
-			return s.CommandStream(call)
+		Impl: func(ctx context.Context, call *server.Call) error {
+			return s.CommandStream(ctx, Connector_commandStream{call})
 		},
-		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 0},
 	})
 
 	methods = append(methods, server.Method{
@@ -201,91 +193,150 @@ func Connector_Methods(methods []server.Method, s Connector_Server) []server.Met
 			InterfaceName: "connector.capnp:Connector",
 			MethodName:    "eventStream",
 		},
-		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
-			call := Connector_eventStream{c, opts, Connector_eventStream_Params{Struct: p}, Connector_eventStream_Results{Struct: r}}
-			return s.EventStream(call)
+		Impl: func(ctx context.Context, call *server.Call) error {
+			return s.EventStream(ctx, Connector_eventStream{call})
 		},
-		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 0},
 	})
 
 	return methods
 }
 
-// Connector_register holds the arguments for a server call to Connector.register.
+// Connector_register holds the state for a server call to Connector.register.
+// See server.Call for documentation.
 type Connector_register struct {
-	Ctx     context.Context
-	Options capnp.CallOptions
-	Params  Connector_register_Params
-	Results Connector_register_Results
+	*server.Call
 }
 
-// Connector_send holds the arguments for a server call to Connector.send.
+// Args returns the call's arguments.
+func (c Connector_register) Args() Connector_register_Params {
+	return Connector_register_Params{Struct: c.Call.Args()}
+}
+
+// AllocResults allocates the results struct.
+func (c Connector_register) AllocResults() (Connector_register_Results, error) {
+	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return Connector_register_Results{Struct: r}, err
+}
+
+// Connector_send holds the state for a server call to Connector.send.
+// See server.Call for documentation.
 type Connector_send struct {
-	Ctx     context.Context
-	Options capnp.CallOptions
-	Params  Connector_send_Params
-	Results Connector_send_Results
+	*server.Call
 }
 
-// Connector_messageStream holds the arguments for a server call to Connector.messageStream.
+// Args returns the call's arguments.
+func (c Connector_send) Args() Connector_send_Params {
+	return Connector_send_Params{Struct: c.Call.Args()}
+}
+
+// AllocResults allocates the results struct.
+func (c Connector_send) AllocResults() (Connector_send_Results, error) {
+	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return Connector_send_Results{Struct: r}, err
+}
+
+// Connector_messageStream holds the state for a server call to Connector.messageStream.
+// See server.Call for documentation.
 type Connector_messageStream struct {
-	Ctx     context.Context
-	Options capnp.CallOptions
-	Params  Connector_messageStream_Params
-	Results Connector_messageStream_Results
+	*server.Call
 }
 
-// Connector_commandStream holds the arguments for a server call to Connector.commandStream.
+// Args returns the call's arguments.
+func (c Connector_messageStream) Args() Connector_messageStream_Params {
+	return Connector_messageStream_Params{Struct: c.Call.Args()}
+}
+
+// AllocResults allocates the results struct.
+func (c Connector_messageStream) AllocResults() (Connector_messageStream_Results, error) {
+	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return Connector_messageStream_Results{Struct: r}, err
+}
+
+// Connector_commandStream holds the state for a server call to Connector.commandStream.
+// See server.Call for documentation.
 type Connector_commandStream struct {
-	Ctx     context.Context
-	Options capnp.CallOptions
-	Params  Connector_commandStream_Params
-	Results Connector_commandStream_Results
+	*server.Call
 }
 
-// Connector_eventStream holds the arguments for a server call to Connector.eventStream.
+// Args returns the call's arguments.
+func (c Connector_commandStream) Args() Connector_commandStream_Params {
+	return Connector_commandStream_Params{Struct: c.Call.Args()}
+}
+
+// AllocResults allocates the results struct.
+func (c Connector_commandStream) AllocResults() (Connector_commandStream_Results, error) {
+	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return Connector_commandStream_Results{Struct: r}, err
+}
+
+// Connector_eventStream holds the state for a server call to Connector.eventStream.
+// See server.Call for documentation.
 type Connector_eventStream struct {
-	Ctx     context.Context
-	Options capnp.CallOptions
-	Params  Connector_eventStream_Params
-	Results Connector_eventStream_Results
+	*server.Call
 }
 
-type Connector_Receiver struct{ Client capnp.Client }
+// Args returns the call's arguments.
+func (c Connector_eventStream) Args() Connector_eventStream_Params {
+	return Connector_eventStream_Params{Struct: c.Call.Args()}
+}
+
+// AllocResults allocates the results struct.
+func (c Connector_eventStream) AllocResults() (Connector_eventStream_Results, error) {
+	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return Connector_eventStream_Results{Struct: r}, err
+}
+
+type Connector_Receiver struct{ Client *capnp.Client }
 
 // Connector_Receiver_TypeID is the unique identifier for the type Connector_Receiver.
 const Connector_Receiver_TypeID = 0x829e954f1fbeabaf
 
-func (c Connector_Receiver) Receive(ctx context.Context, params func(Connector_Receiver_receive_Params) error, opts ...capnp.CallOption) Connector_Receiver_receive_Results_Promise {
-	if c.Client == nil {
-		return Connector_Receiver_receive_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
-	}
-	call := &capnp.Call{
-		Ctx: ctx,
+func (c Connector_Receiver) Receive(ctx context.Context, params func(Connector_Receiver_receive_Params) error) (Connector_Receiver_receive_Results_Future, capnp.ReleaseFunc) {
+	s := capnp.Send{
 		Method: capnp.Method{
 			InterfaceID:   0x829e954f1fbeabaf,
 			MethodID:      0,
 			InterfaceName: "connector.capnp:Connector.Receiver",
 			MethodName:    "receive",
 		},
-		Options: capnp.NewCallOptions(opts),
 	}
 	if params != nil {
-		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		call.ParamsFunc = func(s capnp.Struct) error { return params(Connector_Receiver_receive_Params{Struct: s}) }
+		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
+		s.PlaceArgs = func(s capnp.Struct) error { return params(Connector_Receiver_receive_Params{Struct: s}) }
 	}
-	return Connector_Receiver_receive_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+	ans, release := c.Client.SendCall(ctx, s)
+	return Connector_Receiver_receive_Results_Future{Future: ans.Future()}, release
 }
 
+func (c Connector_Receiver) AddRef() Connector_Receiver {
+	return Connector_Receiver{
+		Client: c.Client.AddRef(),
+	}
+}
+
+func (c Connector_Receiver) Release() {
+	c.Client.Release()
+}
+
+// A Connector_Receiver_Server is a Connector_Receiver with a local implementation.
 type Connector_Receiver_Server interface {
-	Receive(Connector_Receiver_receive) error
+	Receive(context.Context, Connector_Receiver_receive) error
 }
 
-func Connector_Receiver_ServerToClient(s Connector_Receiver_Server) Connector_Receiver {
-	c, _ := s.(server.Closer)
-	return Connector_Receiver{Client: server.New(Connector_Receiver_Methods(nil, s), c)}
+// Connector_Receiver_NewServer creates a new Server from an implementation of Connector_Receiver_Server.
+func Connector_Receiver_NewServer(s Connector_Receiver_Server, policy *server.Policy) *server.Server {
+	c, _ := s.(server.Shutdowner)
+	return server.New(Connector_Receiver_Methods(nil, s), s, c, policy)
 }
 
+// Connector_Receiver_ServerToClient creates a new Client from an implementation of Connector_Receiver_Server.
+// The caller is responsible for calling Release on the returned Client.
+func Connector_Receiver_ServerToClient(s Connector_Receiver_Server, policy *server.Policy) Connector_Receiver {
+	return Connector_Receiver{Client: capnp.NewClient(Connector_Receiver_NewServer(s, policy))}
+}
+
+// Connector_Receiver_Methods appends Methods to a slice that invoke the methods on s.
+// This can be used to create a more complicated Server.
 func Connector_Receiver_Methods(methods []server.Method, s Connector_Receiver_Server) []server.Method {
 	if cap(methods) == 0 {
 		methods = make([]server.Method, 0, 1)
@@ -298,22 +349,29 @@ func Connector_Receiver_Methods(methods []server.Method, s Connector_Receiver_Se
 			InterfaceName: "connector.capnp:Connector.Receiver",
 			MethodName:    "receive",
 		},
-		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
-			call := Connector_Receiver_receive{c, opts, Connector_Receiver_receive_Params{Struct: p}, Connector_Receiver_receive_Results{Struct: r}}
-			return s.Receive(call)
+		Impl: func(ctx context.Context, call *server.Call) error {
+			return s.Receive(ctx, Connector_Receiver_receive{call})
 		},
-		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 0},
 	})
 
 	return methods
 }
 
-// Connector_Receiver_receive holds the arguments for a server call to Connector_Receiver.receive.
+// Connector_Receiver_receive holds the state for a server call to Connector_Receiver.receive.
+// See server.Call for documentation.
 type Connector_Receiver_receive struct {
-	Ctx     context.Context
-	Options capnp.CallOptions
-	Params  Connector_Receiver_receive_Params
-	Results Connector_Receiver_receive_Results
+	*server.Call
+}
+
+// Args returns the call's arguments.
+func (c Connector_Receiver_receive) Args() Connector_Receiver_receive_Params {
+	return Connector_Receiver_receive_Params{Struct: c.Call.Args()}
+}
+
+// AllocResults allocates the results struct.
+func (c Connector_Receiver_receive) AllocResults() (Connector_Receiver_receive_Results, error) {
+	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return Connector_Receiver_receive_Results{Struct: r}, err
 }
 
 type Connector_Receiver_receive_Params struct{ capnp.Struct }
@@ -332,7 +390,7 @@ func NewRootConnector_Receiver_receive_Params(s *capnp.Segment) (Connector_Recei
 }
 
 func ReadRootConnector_Receiver_receive_Params(msg *capnp.Message) (Connector_Receiver_receive_Params, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Connector_Receiver_receive_Params{root.Struct()}, err
 }
 
@@ -341,24 +399,15 @@ func (s Connector_Receiver_receive_Params) String() string {
 	return str
 }
 
-func (s Connector_Receiver_receive_Params) Message() (capnp.Pointer, error) {
-	return s.Struct.Pointer(0)
-}
-
-func (s Connector_Receiver_receive_Params) HasMessage() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
-}
-
-func (s Connector_Receiver_receive_Params) MessagePtr() (capnp.Ptr, error) {
+func (s Connector_Receiver_receive_Params) Message() (capnp.Ptr, error) {
 	return s.Struct.Ptr(0)
 }
 
-func (s Connector_Receiver_receive_Params) SetMessage(v capnp.Pointer) error {
-	return s.Struct.SetPointer(0, v)
+func (s Connector_Receiver_receive_Params) HasMessage() bool {
+	return s.Struct.HasPtr(0)
 }
 
-func (s Connector_Receiver_receive_Params) SetMessagePtr(v capnp.Ptr) error {
+func (s Connector_Receiver_receive_Params) SetMessage(v capnp.Ptr) error {
 	return s.Struct.SetPtr(0, v)
 }
 
@@ -384,16 +433,16 @@ func (s Connector_Receiver_receive_Params_List) String() string {
 	return str
 }
 
-// Connector_Receiver_receive_Params_Promise is a wrapper for a Connector_Receiver_receive_Params promised by a client call.
-type Connector_Receiver_receive_Params_Promise struct{ *capnp.Pipeline }
+// Connector_Receiver_receive_Params_Future is a wrapper for a Connector_Receiver_receive_Params promised by a client call.
+type Connector_Receiver_receive_Params_Future struct{ *capnp.Future }
 
-func (p Connector_Receiver_receive_Params_Promise) Struct() (Connector_Receiver_receive_Params, error) {
-	s, err := p.Pipeline.Struct()
+func (p Connector_Receiver_receive_Params_Future) Struct() (Connector_Receiver_receive_Params, error) {
+	s, err := p.Future.Struct()
 	return Connector_Receiver_receive_Params{s}, err
 }
 
-func (p Connector_Receiver_receive_Params_Promise) Message() *capnp.Pipeline {
-	return p.Pipeline.GetPipeline(0)
+func (p Connector_Receiver_receive_Params_Future) Message() *capnp.Future {
+	return p.Future.Field(0, nil)
 }
 
 type Connector_Receiver_receive_Results struct{ capnp.Struct }
@@ -412,7 +461,7 @@ func NewRootConnector_Receiver_receive_Results(s *capnp.Segment) (Connector_Rece
 }
 
 func ReadRootConnector_Receiver_receive_Results(msg *capnp.Message) (Connector_Receiver_receive_Results, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Connector_Receiver_receive_Results{root.Struct()}, err
 }
 
@@ -443,11 +492,11 @@ func (s Connector_Receiver_receive_Results_List) String() string {
 	return str
 }
 
-// Connector_Receiver_receive_Results_Promise is a wrapper for a Connector_Receiver_receive_Results promised by a client call.
-type Connector_Receiver_receive_Results_Promise struct{ *capnp.Pipeline }
+// Connector_Receiver_receive_Results_Future is a wrapper for a Connector_Receiver_receive_Results promised by a client call.
+type Connector_Receiver_receive_Results_Future struct{ *capnp.Future }
 
-func (p Connector_Receiver_receive_Results_Promise) Struct() (Connector_Receiver_receive_Results, error) {
-	s, err := p.Pipeline.Struct()
+func (p Connector_Receiver_receive_Results_Future) Struct() (Connector_Receiver_receive_Results, error) {
+	s, err := p.Future.Struct()
 	return Connector_Receiver_receive_Results{s}, err
 }
 
@@ -467,7 +516,7 @@ func NewRootConnector_register_Params(s *capnp.Segment) (Connector_register_Para
 }
 
 func ReadRootConnector_register_Params(msg *capnp.Message) (Connector_register_Params, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Connector_register_Params{root.Struct()}, err
 }
 
@@ -482,8 +531,7 @@ func (s Connector_register_Params) Registration() (RegistrationPacket, error) {
 }
 
 func (s Connector_register_Params) HasRegistration() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s Connector_register_Params) SetRegistration(v RegistrationPacket) error {
@@ -523,16 +571,16 @@ func (s Connector_register_Params_List) String() string {
 	return str
 }
 
-// Connector_register_Params_Promise is a wrapper for a Connector_register_Params promised by a client call.
-type Connector_register_Params_Promise struct{ *capnp.Pipeline }
+// Connector_register_Params_Future is a wrapper for a Connector_register_Params promised by a client call.
+type Connector_register_Params_Future struct{ *capnp.Future }
 
-func (p Connector_register_Params_Promise) Struct() (Connector_register_Params, error) {
-	s, err := p.Pipeline.Struct()
+func (p Connector_register_Params_Future) Struct() (Connector_register_Params, error) {
+	s, err := p.Future.Struct()
 	return Connector_register_Params{s}, err
 }
 
-func (p Connector_register_Params_Promise) Registration() RegistrationPacket_Promise {
-	return RegistrationPacket_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+func (p Connector_register_Params_Future) Registration() RegistrationPacket_Future {
+	return RegistrationPacket_Future{Future: p.Future.Field(0, nil)}
 }
 
 type Connector_register_Results struct{ capnp.Struct }
@@ -551,7 +599,7 @@ func NewRootConnector_register_Results(s *capnp.Segment) (Connector_register_Res
 }
 
 func ReadRootConnector_register_Results(msg *capnp.Message) (Connector_register_Results, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Connector_register_Results{root.Struct()}, err
 }
 
@@ -566,8 +614,7 @@ func (s Connector_register_Results) Confirmation() (ConfirmationPacket, error) {
 }
 
 func (s Connector_register_Results) HasConfirmation() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s Connector_register_Results) SetConfirmation(v ConfirmationPacket) error {
@@ -607,16 +654,16 @@ func (s Connector_register_Results_List) String() string {
 	return str
 }
 
-// Connector_register_Results_Promise is a wrapper for a Connector_register_Results promised by a client call.
-type Connector_register_Results_Promise struct{ *capnp.Pipeline }
+// Connector_register_Results_Future is a wrapper for a Connector_register_Results promised by a client call.
+type Connector_register_Results_Future struct{ *capnp.Future }
 
-func (p Connector_register_Results_Promise) Struct() (Connector_register_Results, error) {
-	s, err := p.Pipeline.Struct()
+func (p Connector_register_Results_Future) Struct() (Connector_register_Results, error) {
+	s, err := p.Future.Struct()
 	return Connector_register_Results{s}, err
 }
 
-func (p Connector_register_Results_Promise) Confirmation() ConfirmationPacket_Promise {
-	return ConfirmationPacket_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+func (p Connector_register_Results_Future) Confirmation() ConfirmationPacket_Future {
+	return ConfirmationPacket_Future{Future: p.Future.Field(0, nil)}
 }
 
 type Connector_send_Params struct{ capnp.Struct }
@@ -635,7 +682,7 @@ func NewRootConnector_send_Params(s *capnp.Segment) (Connector_send_Params, erro
 }
 
 func ReadRootConnector_send_Params(msg *capnp.Message) (Connector_send_Params, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Connector_send_Params{root.Struct()}, err
 }
 
@@ -650,8 +697,7 @@ func (s Connector_send_Params) Message() (OutgoingMessagePacket, error) {
 }
 
 func (s Connector_send_Params) HasMessage() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s Connector_send_Params) SetMessage(v OutgoingMessagePacket) error {
@@ -691,16 +737,16 @@ func (s Connector_send_Params_List) String() string {
 	return str
 }
 
-// Connector_send_Params_Promise is a wrapper for a Connector_send_Params promised by a client call.
-type Connector_send_Params_Promise struct{ *capnp.Pipeline }
+// Connector_send_Params_Future is a wrapper for a Connector_send_Params promised by a client call.
+type Connector_send_Params_Future struct{ *capnp.Future }
 
-func (p Connector_send_Params_Promise) Struct() (Connector_send_Params, error) {
-	s, err := p.Pipeline.Struct()
+func (p Connector_send_Params_Future) Struct() (Connector_send_Params, error) {
+	s, err := p.Future.Struct()
 	return Connector_send_Params{s}, err
 }
 
-func (p Connector_send_Params_Promise) Message() OutgoingMessagePacket_Promise {
-	return OutgoingMessagePacket_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+func (p Connector_send_Params_Future) Message() OutgoingMessagePacket_Future {
+	return OutgoingMessagePacket_Future{Future: p.Future.Field(0, nil)}
 }
 
 type Connector_send_Results struct{ capnp.Struct }
@@ -719,7 +765,7 @@ func NewRootConnector_send_Results(s *capnp.Segment) (Connector_send_Results, er
 }
 
 func ReadRootConnector_send_Results(msg *capnp.Message) (Connector_send_Results, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Connector_send_Results{root.Struct()}, err
 }
 
@@ -750,11 +796,11 @@ func (s Connector_send_Results_List) String() string {
 	return str
 }
 
-// Connector_send_Results_Promise is a wrapper for a Connector_send_Results promised by a client call.
-type Connector_send_Results_Promise struct{ *capnp.Pipeline }
+// Connector_send_Results_Future is a wrapper for a Connector_send_Results promised by a client call.
+type Connector_send_Results_Future struct{ *capnp.Future }
 
-func (p Connector_send_Results_Promise) Struct() (Connector_send_Results, error) {
-	s, err := p.Pipeline.Struct()
+func (p Connector_send_Results_Future) Struct() (Connector_send_Results, error) {
+	s, err := p.Future.Struct()
 	return Connector_send_Results{s}, err
 }
 
@@ -774,7 +820,7 @@ func NewRootConnector_messageStream_Params(s *capnp.Segment) (Connector_messageS
 }
 
 func ReadRootConnector_messageStream_Params(msg *capnp.Message) (Connector_messageStream_Params, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Connector_messageStream_Params{root.Struct()}, err
 }
 
@@ -789,12 +835,11 @@ func (s Connector_messageStream_Params) Receiver() Connector_Receiver {
 }
 
 func (s Connector_messageStream_Params) HasReceiver() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s Connector_messageStream_Params) SetReceiver(v Connector_Receiver) error {
-	if v.Client == nil {
+	if !v.Client.IsValid() {
 		return s.Struct.SetPtr(0, capnp.Ptr{})
 	}
 	seg := s.Segment()
@@ -824,16 +869,16 @@ func (s Connector_messageStream_Params_List) String() string {
 	return str
 }
 
-// Connector_messageStream_Params_Promise is a wrapper for a Connector_messageStream_Params promised by a client call.
-type Connector_messageStream_Params_Promise struct{ *capnp.Pipeline }
+// Connector_messageStream_Params_Future is a wrapper for a Connector_messageStream_Params promised by a client call.
+type Connector_messageStream_Params_Future struct{ *capnp.Future }
 
-func (p Connector_messageStream_Params_Promise) Struct() (Connector_messageStream_Params, error) {
-	s, err := p.Pipeline.Struct()
+func (p Connector_messageStream_Params_Future) Struct() (Connector_messageStream_Params, error) {
+	s, err := p.Future.Struct()
 	return Connector_messageStream_Params{s}, err
 }
 
-func (p Connector_messageStream_Params_Promise) Receiver() Connector_Receiver {
-	return Connector_Receiver{Client: p.Pipeline.GetPipeline(0).Client()}
+func (p Connector_messageStream_Params_Future) Receiver() Connector_Receiver {
+	return Connector_Receiver{Client: p.Future.Field(0, nil).Client()}
 }
 
 type Connector_messageStream_Results struct{ capnp.Struct }
@@ -852,7 +897,7 @@ func NewRootConnector_messageStream_Results(s *capnp.Segment) (Connector_message
 }
 
 func ReadRootConnector_messageStream_Results(msg *capnp.Message) (Connector_messageStream_Results, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Connector_messageStream_Results{root.Struct()}, err
 }
 
@@ -883,11 +928,11 @@ func (s Connector_messageStream_Results_List) String() string {
 	return str
 }
 
-// Connector_messageStream_Results_Promise is a wrapper for a Connector_messageStream_Results promised by a client call.
-type Connector_messageStream_Results_Promise struct{ *capnp.Pipeline }
+// Connector_messageStream_Results_Future is a wrapper for a Connector_messageStream_Results promised by a client call.
+type Connector_messageStream_Results_Future struct{ *capnp.Future }
 
-func (p Connector_messageStream_Results_Promise) Struct() (Connector_messageStream_Results, error) {
-	s, err := p.Pipeline.Struct()
+func (p Connector_messageStream_Results_Future) Struct() (Connector_messageStream_Results, error) {
+	s, err := p.Future.Struct()
 	return Connector_messageStream_Results{s}, err
 }
 
@@ -907,7 +952,7 @@ func NewRootConnector_commandStream_Params(s *capnp.Segment) (Connector_commandS
 }
 
 func ReadRootConnector_commandStream_Params(msg *capnp.Message) (Connector_commandStream_Params, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Connector_commandStream_Params{root.Struct()}, err
 }
 
@@ -922,12 +967,11 @@ func (s Connector_commandStream_Params) Receiver() Connector_Receiver {
 }
 
 func (s Connector_commandStream_Params) HasReceiver() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s Connector_commandStream_Params) SetReceiver(v Connector_Receiver) error {
-	if v.Client == nil {
+	if !v.Client.IsValid() {
 		return s.Struct.SetPtr(0, capnp.Ptr{})
 	}
 	seg := s.Segment()
@@ -957,16 +1001,16 @@ func (s Connector_commandStream_Params_List) String() string {
 	return str
 }
 
-// Connector_commandStream_Params_Promise is a wrapper for a Connector_commandStream_Params promised by a client call.
-type Connector_commandStream_Params_Promise struct{ *capnp.Pipeline }
+// Connector_commandStream_Params_Future is a wrapper for a Connector_commandStream_Params promised by a client call.
+type Connector_commandStream_Params_Future struct{ *capnp.Future }
 
-func (p Connector_commandStream_Params_Promise) Struct() (Connector_commandStream_Params, error) {
-	s, err := p.Pipeline.Struct()
+func (p Connector_commandStream_Params_Future) Struct() (Connector_commandStream_Params, error) {
+	s, err := p.Future.Struct()
 	return Connector_commandStream_Params{s}, err
 }
 
-func (p Connector_commandStream_Params_Promise) Receiver() Connector_Receiver {
-	return Connector_Receiver{Client: p.Pipeline.GetPipeline(0).Client()}
+func (p Connector_commandStream_Params_Future) Receiver() Connector_Receiver {
+	return Connector_Receiver{Client: p.Future.Field(0, nil).Client()}
 }
 
 type Connector_commandStream_Results struct{ capnp.Struct }
@@ -985,7 +1029,7 @@ func NewRootConnector_commandStream_Results(s *capnp.Segment) (Connector_command
 }
 
 func ReadRootConnector_commandStream_Results(msg *capnp.Message) (Connector_commandStream_Results, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Connector_commandStream_Results{root.Struct()}, err
 }
 
@@ -1016,11 +1060,11 @@ func (s Connector_commandStream_Results_List) String() string {
 	return str
 }
 
-// Connector_commandStream_Results_Promise is a wrapper for a Connector_commandStream_Results promised by a client call.
-type Connector_commandStream_Results_Promise struct{ *capnp.Pipeline }
+// Connector_commandStream_Results_Future is a wrapper for a Connector_commandStream_Results promised by a client call.
+type Connector_commandStream_Results_Future struct{ *capnp.Future }
 
-func (p Connector_commandStream_Results_Promise) Struct() (Connector_commandStream_Results, error) {
-	s, err := p.Pipeline.Struct()
+func (p Connector_commandStream_Results_Future) Struct() (Connector_commandStream_Results, error) {
+	s, err := p.Future.Struct()
 	return Connector_commandStream_Results{s}, err
 }
 
@@ -1040,7 +1084,7 @@ func NewRootConnector_eventStream_Params(s *capnp.Segment) (Connector_eventStrea
 }
 
 func ReadRootConnector_eventStream_Params(msg *capnp.Message) (Connector_eventStream_Params, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Connector_eventStream_Params{root.Struct()}, err
 }
 
@@ -1055,12 +1099,11 @@ func (s Connector_eventStream_Params) Receiver() Connector_Receiver {
 }
 
 func (s Connector_eventStream_Params) HasReceiver() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s Connector_eventStream_Params) SetReceiver(v Connector_Receiver) error {
-	if v.Client == nil {
+	if !v.Client.IsValid() {
 		return s.Struct.SetPtr(0, capnp.Ptr{})
 	}
 	seg := s.Segment()
@@ -1090,16 +1133,16 @@ func (s Connector_eventStream_Params_List) String() string {
 	return str
 }
 
-// Connector_eventStream_Params_Promise is a wrapper for a Connector_eventStream_Params promised by a client call.
-type Connector_eventStream_Params_Promise struct{ *capnp.Pipeline }
+// Connector_eventStream_Params_Future is a wrapper for a Connector_eventStream_Params promised by a client call.
+type Connector_eventStream_Params_Future struct{ *capnp.Future }
 
-func (p Connector_eventStream_Params_Promise) Struct() (Connector_eventStream_Params, error) {
-	s, err := p.Pipeline.Struct()
+func (p Connector_eventStream_Params_Future) Struct() (Connector_eventStream_Params, error) {
+	s, err := p.Future.Struct()
 	return Connector_eventStream_Params{s}, err
 }
 
-func (p Connector_eventStream_Params_Promise) Receiver() Connector_Receiver {
-	return Connector_Receiver{Client: p.Pipeline.GetPipeline(0).Client()}
+func (p Connector_eventStream_Params_Future) Receiver() Connector_Receiver {
+	return Connector_Receiver{Client: p.Future.Field(0, nil).Client()}
 }
 
 type Connector_eventStream_Results struct{ capnp.Struct }
@@ -1118,7 +1161,7 @@ func NewRootConnector_eventStream_Results(s *capnp.Segment) (Connector_eventStre
 }
 
 func ReadRootConnector_eventStream_Results(msg *capnp.Message) (Connector_eventStream_Results, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Connector_eventStream_Results{root.Struct()}, err
 }
 
@@ -1149,49 +1192,65 @@ func (s Connector_eventStream_Results_List) String() string {
 	return str
 }
 
-// Connector_eventStream_Results_Promise is a wrapper for a Connector_eventStream_Results promised by a client call.
-type Connector_eventStream_Results_Promise struct{ *capnp.Pipeline }
+// Connector_eventStream_Results_Future is a wrapper for a Connector_eventStream_Results promised by a client call.
+type Connector_eventStream_Results_Future struct{ *capnp.Future }
 
-func (p Connector_eventStream_Results_Promise) Struct() (Connector_eventStream_Results, error) {
-	s, err := p.Pipeline.Struct()
+func (p Connector_eventStream_Results_Future) Struct() (Connector_eventStream_Results, error) {
+	s, err := p.Future.Struct()
 	return Connector_eventStream_Results{s}, err
 }
 
-type Server struct{ Client capnp.Client }
+type Server struct{ Client *capnp.Client }
 
 // Server_TypeID is the unique identifier for the type Server.
 const Server_TypeID = 0xfe0af31607f108a8
 
-func (c Server) Send(ctx context.Context, params func(Server_send_Params) error, opts ...capnp.CallOption) Server_send_Results_Promise {
-	if c.Client == nil {
-		return Server_send_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
-	}
-	call := &capnp.Call{
-		Ctx: ctx,
+func (c Server) Send(ctx context.Context, params func(Server_send_Params) error) (Server_send_Results_Future, capnp.ReleaseFunc) {
+	s := capnp.Send{
 		Method: capnp.Method{
 			InterfaceID:   0xfe0af31607f108a8,
 			MethodID:      0,
 			InterfaceName: "connector.capnp:Server",
 			MethodName:    "send",
 		},
-		Options: capnp.NewCallOptions(opts),
 	}
 	if params != nil {
-		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		call.ParamsFunc = func(s capnp.Struct) error { return params(Server_send_Params{Struct: s}) }
+		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
+		s.PlaceArgs = func(s capnp.Struct) error { return params(Server_send_Params{Struct: s}) }
 	}
-	return Server_send_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+	ans, release := c.Client.SendCall(ctx, s)
+	return Server_send_Results_Future{Future: ans.Future()}, release
 }
 
+func (c Server) AddRef() Server {
+	return Server{
+		Client: c.Client.AddRef(),
+	}
+}
+
+func (c Server) Release() {
+	c.Client.Release()
+}
+
+// A Server_Server is a Server with a local implementation.
 type Server_Server interface {
-	Send(Server_send) error
+	Send(context.Context, Server_send) error
 }
 
-func Server_ServerToClient(s Server_Server) Server {
-	c, _ := s.(server.Closer)
-	return Server{Client: server.New(Server_Methods(nil, s), c)}
+// Server_NewServer creates a new Server from an implementation of Server_Server.
+func Server_NewServer(s Server_Server, policy *server.Policy) *server.Server {
+	c, _ := s.(server.Shutdowner)
+	return server.New(Server_Methods(nil, s), s, c, policy)
 }
 
+// Server_ServerToClient creates a new Client from an implementation of Server_Server.
+// The caller is responsible for calling Release on the returned Client.
+func Server_ServerToClient(s Server_Server, policy *server.Policy) Server {
+	return Server{Client: capnp.NewClient(Server_NewServer(s, policy))}
+}
+
+// Server_Methods appends Methods to a slice that invoke the methods on s.
+// This can be used to create a more complicated Server.
 func Server_Methods(methods []server.Method, s Server_Server) []server.Method {
 	if cap(methods) == 0 {
 		methods = make([]server.Method, 0, 1)
@@ -1204,59 +1263,82 @@ func Server_Methods(methods []server.Method, s Server_Server) []server.Method {
 			InterfaceName: "connector.capnp:Server",
 			MethodName:    "send",
 		},
-		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
-			call := Server_send{c, opts, Server_send_Params{Struct: p}, Server_send_Results{Struct: r}}
-			return s.Send(call)
+		Impl: func(ctx context.Context, call *server.Call) error {
+			return s.Send(ctx, Server_send{call})
 		},
-		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 0},
 	})
 
 	return methods
 }
 
-// Server_send holds the arguments for a server call to Server.send.
+// Server_send holds the state for a server call to Server.send.
+// See server.Call for documentation.
 type Server_send struct {
-	Ctx     context.Context
-	Options capnp.CallOptions
-	Params  Server_send_Params
-	Results Server_send_Results
+	*server.Call
 }
 
-type Server_Receiver struct{ Client capnp.Client }
+// Args returns the call's arguments.
+func (c Server_send) Args() Server_send_Params {
+	return Server_send_Params{Struct: c.Call.Args()}
+}
+
+// AllocResults allocates the results struct.
+func (c Server_send) AllocResults() (Server_send_Results, error) {
+	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return Server_send_Results{Struct: r}, err
+}
+
+type Server_Receiver struct{ Client *capnp.Client }
 
 // Server_Receiver_TypeID is the unique identifier for the type Server_Receiver.
 const Server_Receiver_TypeID = 0xc75d2aae6f719b2e
 
-func (c Server_Receiver) Receive(ctx context.Context, params func(Server_Receiver_receive_Params) error, opts ...capnp.CallOption) Server_Receiver_receive_Results_Promise {
-	if c.Client == nil {
-		return Server_Receiver_receive_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
-	}
-	call := &capnp.Call{
-		Ctx: ctx,
+func (c Server_Receiver) Receive(ctx context.Context, params func(Server_Receiver_receive_Params) error) (Server_Receiver_receive_Results_Future, capnp.ReleaseFunc) {
+	s := capnp.Send{
 		Method: capnp.Method{
 			InterfaceID:   0xc75d2aae6f719b2e,
 			MethodID:      0,
 			InterfaceName: "connector.capnp:Server.Receiver",
 			MethodName:    "receive",
 		},
-		Options: capnp.NewCallOptions(opts),
 	}
 	if params != nil {
-		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		call.ParamsFunc = func(s capnp.Struct) error { return params(Server_Receiver_receive_Params{Struct: s}) }
+		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
+		s.PlaceArgs = func(s capnp.Struct) error { return params(Server_Receiver_receive_Params{Struct: s}) }
 	}
-	return Server_Receiver_receive_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+	ans, release := c.Client.SendCall(ctx, s)
+	return Server_Receiver_receive_Results_Future{Future: ans.Future()}, release
 }
 
+func (c Server_Receiver) AddRef() Server_Receiver {
+	return Server_Receiver{
+		Client: c.Client.AddRef(),
+	}
+}
+
+func (c Server_Receiver) Release() {
+	c.Client.Release()
+}
+
+// A Server_Receiver_Server is a Server_Receiver with a local implementation.
 type Server_Receiver_Server interface {
-	Receive(Server_Receiver_receive) error
+	Receive(context.Context, Server_Receiver_receive) error
 }
 
-func Server_Receiver_ServerToClient(s Server_Receiver_Server) Server_Receiver {
-	c, _ := s.(server.Closer)
-	return Server_Receiver{Client: server.New(Server_Receiver_Methods(nil, s), c)}
+// Server_Receiver_NewServer creates a new Server from an implementation of Server_Receiver_Server.
+func Server_Receiver_NewServer(s Server_Receiver_Server, policy *server.Policy) *server.Server {
+	c, _ := s.(server.Shutdowner)
+	return server.New(Server_Receiver_Methods(nil, s), s, c, policy)
 }
 
+// Server_Receiver_ServerToClient creates a new Client from an implementation of Server_Receiver_Server.
+// The caller is responsible for calling Release on the returned Client.
+func Server_Receiver_ServerToClient(s Server_Receiver_Server, policy *server.Policy) Server_Receiver {
+	return Server_Receiver{Client: capnp.NewClient(Server_Receiver_NewServer(s, policy))}
+}
+
+// Server_Receiver_Methods appends Methods to a slice that invoke the methods on s.
+// This can be used to create a more complicated Server.
 func Server_Receiver_Methods(methods []server.Method, s Server_Receiver_Server) []server.Method {
 	if cap(methods) == 0 {
 		methods = make([]server.Method, 0, 1)
@@ -1269,22 +1351,29 @@ func Server_Receiver_Methods(methods []server.Method, s Server_Receiver_Server) 
 			InterfaceName: "connector.capnp:Server.Receiver",
 			MethodName:    "receive",
 		},
-		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
-			call := Server_Receiver_receive{c, opts, Server_Receiver_receive_Params{Struct: p}, Server_Receiver_receive_Results{Struct: r}}
-			return s.Receive(call)
+		Impl: func(ctx context.Context, call *server.Call) error {
+			return s.Receive(ctx, Server_Receiver_receive{call})
 		},
-		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 0},
 	})
 
 	return methods
 }
 
-// Server_Receiver_receive holds the arguments for a server call to Server_Receiver.receive.
+// Server_Receiver_receive holds the state for a server call to Server_Receiver.receive.
+// See server.Call for documentation.
 type Server_Receiver_receive struct {
-	Ctx     context.Context
-	Options capnp.CallOptions
-	Params  Server_Receiver_receive_Params
-	Results Server_Receiver_receive_Results
+	*server.Call
+}
+
+// Args returns the call's arguments.
+func (c Server_Receiver_receive) Args() Server_Receiver_receive_Params {
+	return Server_Receiver_receive_Params{Struct: c.Call.Args()}
+}
+
+// AllocResults allocates the results struct.
+func (c Server_Receiver_receive) AllocResults() (Server_Receiver_receive_Results, error) {
+	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return Server_Receiver_receive_Results{Struct: r}, err
 }
 
 type Server_Receiver_receive_Params struct{ capnp.Struct }
@@ -1303,7 +1392,7 @@ func NewRootServer_Receiver_receive_Params(s *capnp.Segment) (Server_Receiver_re
 }
 
 func ReadRootServer_Receiver_receive_Params(msg *capnp.Message) (Server_Receiver_receive_Params, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Server_Receiver_receive_Params{root.Struct()}, err
 }
 
@@ -1312,24 +1401,15 @@ func (s Server_Receiver_receive_Params) String() string {
 	return str
 }
 
-func (s Server_Receiver_receive_Params) Message() (capnp.Pointer, error) {
-	return s.Struct.Pointer(0)
-}
-
-func (s Server_Receiver_receive_Params) HasMessage() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
-}
-
-func (s Server_Receiver_receive_Params) MessagePtr() (capnp.Ptr, error) {
+func (s Server_Receiver_receive_Params) Message() (capnp.Ptr, error) {
 	return s.Struct.Ptr(0)
 }
 
-func (s Server_Receiver_receive_Params) SetMessage(v capnp.Pointer) error {
-	return s.Struct.SetPointer(0, v)
+func (s Server_Receiver_receive_Params) HasMessage() bool {
+	return s.Struct.HasPtr(0)
 }
 
-func (s Server_Receiver_receive_Params) SetMessagePtr(v capnp.Ptr) error {
+func (s Server_Receiver_receive_Params) SetMessage(v capnp.Ptr) error {
 	return s.Struct.SetPtr(0, v)
 }
 
@@ -1355,16 +1435,16 @@ func (s Server_Receiver_receive_Params_List) String() string {
 	return str
 }
 
-// Server_Receiver_receive_Params_Promise is a wrapper for a Server_Receiver_receive_Params promised by a client call.
-type Server_Receiver_receive_Params_Promise struct{ *capnp.Pipeline }
+// Server_Receiver_receive_Params_Future is a wrapper for a Server_Receiver_receive_Params promised by a client call.
+type Server_Receiver_receive_Params_Future struct{ *capnp.Future }
 
-func (p Server_Receiver_receive_Params_Promise) Struct() (Server_Receiver_receive_Params, error) {
-	s, err := p.Pipeline.Struct()
+func (p Server_Receiver_receive_Params_Future) Struct() (Server_Receiver_receive_Params, error) {
+	s, err := p.Future.Struct()
 	return Server_Receiver_receive_Params{s}, err
 }
 
-func (p Server_Receiver_receive_Params_Promise) Message() *capnp.Pipeline {
-	return p.Pipeline.GetPipeline(0)
+func (p Server_Receiver_receive_Params_Future) Message() *capnp.Future {
+	return p.Future.Field(0, nil)
 }
 
 type Server_Receiver_receive_Results struct{ capnp.Struct }
@@ -1383,7 +1463,7 @@ func NewRootServer_Receiver_receive_Results(s *capnp.Segment) (Server_Receiver_r
 }
 
 func ReadRootServer_Receiver_receive_Results(msg *capnp.Message) (Server_Receiver_receive_Results, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Server_Receiver_receive_Results{root.Struct()}, err
 }
 
@@ -1414,11 +1494,11 @@ func (s Server_Receiver_receive_Results_List) String() string {
 	return str
 }
 
-// Server_Receiver_receive_Results_Promise is a wrapper for a Server_Receiver_receive_Results promised by a client call.
-type Server_Receiver_receive_Results_Promise struct{ *capnp.Pipeline }
+// Server_Receiver_receive_Results_Future is a wrapper for a Server_Receiver_receive_Results promised by a client call.
+type Server_Receiver_receive_Results_Future struct{ *capnp.Future }
 
-func (p Server_Receiver_receive_Results_Promise) Struct() (Server_Receiver_receive_Results, error) {
-	s, err := p.Pipeline.Struct()
+func (p Server_Receiver_receive_Results_Future) Struct() (Server_Receiver_receive_Results, error) {
+	s, err := p.Future.Struct()
 	return Server_Receiver_receive_Results{s}, err
 }
 
@@ -1438,7 +1518,7 @@ func NewRootServer_send_Params(s *capnp.Segment) (Server_send_Params, error) {
 }
 
 func ReadRootServer_send_Params(msg *capnp.Message) (Server_send_Params, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Server_send_Params{root.Struct()}, err
 }
 
@@ -1453,12 +1533,11 @@ func (s Server_send_Params) Receiver() Server_Receiver {
 }
 
 func (s Server_send_Params) HasReceiver() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s Server_send_Params) SetReceiver(v Server_Receiver) error {
-	if v.Client == nil {
+	if !v.Client.IsValid() {
 		return s.Struct.SetPtr(0, capnp.Ptr{})
 	}
 	seg := s.Segment()
@@ -1488,16 +1567,16 @@ func (s Server_send_Params_List) String() string {
 	return str
 }
 
-// Server_send_Params_Promise is a wrapper for a Server_send_Params promised by a client call.
-type Server_send_Params_Promise struct{ *capnp.Pipeline }
+// Server_send_Params_Future is a wrapper for a Server_send_Params promised by a client call.
+type Server_send_Params_Future struct{ *capnp.Future }
 
-func (p Server_send_Params_Promise) Struct() (Server_send_Params, error) {
-	s, err := p.Pipeline.Struct()
+func (p Server_send_Params_Future) Struct() (Server_send_Params, error) {
+	s, err := p.Future.Struct()
 	return Server_send_Params{s}, err
 }
 
-func (p Server_send_Params_Promise) Receiver() Server_Receiver {
-	return Server_Receiver{Client: p.Pipeline.GetPipeline(0).Client()}
+func (p Server_send_Params_Future) Receiver() Server_Receiver {
+	return Server_Receiver{Client: p.Future.Field(0, nil).Client()}
 }
 
 type Server_send_Results struct{ capnp.Struct }
@@ -1516,7 +1595,7 @@ func NewRootServer_send_Results(s *capnp.Segment) (Server_send_Results, error) {
 }
 
 func ReadRootServer_send_Results(msg *capnp.Message) (Server_send_Results, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Server_send_Results{root.Struct()}, err
 }
 
@@ -1547,84 +1626,85 @@ func (s Server_send_Results_List) String() string {
 	return str
 }
 
-// Server_send_Results_Promise is a wrapper for a Server_send_Results promised by a client call.
-type Server_send_Results_Promise struct{ *capnp.Pipeline }
+// Server_send_Results_Future is a wrapper for a Server_send_Results promised by a client call.
+type Server_send_Results_Future struct{ *capnp.Future }
 
-func (p Server_send_Results_Promise) Struct() (Server_send_Results, error) {
-	s, err := p.Pipeline.Struct()
+func (p Server_send_Results_Future) Struct() (Server_send_Results, error) {
+	s, err := p.Future.Struct()
 	return Server_send_Results{s}, err
 }
 
-const schema_962b7a64e96c7802 = "x\xda\xbcV]h\x1cU\x14>g\xe6\xceL\x13\x1a" +
-	"\xb3\xb7\x93t5\xa8I5hm1$\xa6U\x88\xda" +
-	"\xfc\x14L\x1a,\xcel\xf1\xa1\xd1\xa0\xeb\xe6\x9al\xcc" +
-	"\xec6\xb3\x9b \xa96R\x15\x8d\x8aX%E+\xd6" +
-	"\x8a(j\xa5i(A,\xd4_\xaa\x16\x0ab4\xc5" +
-	">j\xd5\xb4T\x91 \"\xb5\xea\xc8\xbd\xb3\xf3\x93\xed" +
-	"n\x12\x1f\xec\xdb\xee\xbd\xdf\xb9\xe7\xbb\xdf=\xe7;S" +
-	"\xbf[j\x91\x1a\x94Y\x15\xc04\x14\xd5\x99\xd8\xffA" +
-	"\xf5\x1d\xe3{w\x02\xad\x92\x9dg\xd7\x92{\x8c\xd9\x0d" +
-	"\x9f\x02@\x04\x1b\xb7\xcaU\xa8'e\x0d@gr\xbb" +
-	">%k\xfa\x94\\\xeel\xf8d\xa0\xe3\xdaG\xec\xbd" +
-	"@\xab\x10@A\x0d\xa0\xf1m\xb9\x1f\x01\xf5)\xb9\x19" +
-	"\xd0\x19Y\xd5U\xaa\x9e\xefx5\x0c(!#\x1cP" +
-	"I8\xe0\xbd+\xadG\xef\xbc\x97\xedw\x01\x84\xef'" +
-	"I\x13\x02q\xf4s\xfbn\xa1/=\xf3n8\xd4t" +
-	"C\xbbE\xe8]\xdf\xbeS\x19\xad\x9b\x9b\x08\x03&I" +
-	"\x8c\x03\x8e\x08\x80~\xfa\xa3\x9a\xd7\x1a6\x1f\x01Z\xe3" +
-	"\x02\"\xd8\xf8\x9d{\xc2/\x02p\xfe\xf0\xcaK~\xbf" +
-	"\xf9\xab\x0f\x81F\xfd\x13\xca\x94*\xc1N\xe1\x80}\xbd" +
-	"\x155\xab3\xc7>v\x01.;\xe5*\xce\xce\x97\x87" +
-	"FdGzp\xe0L\xcf\xc8\xda\xdd\x00\xa8\x9b\xca\xb4" +
-	"\xde\xadD\x05\xb2\x1d\xf5VU\x03pN\xfdy\xd3\xa9" +
-	"\xfa\xb1\x87\x8e\x86ny\x9d\xba\x93\x9fS\xf7\xf2`\xfa" +
-	"\xc0\x9a\xee\xcf\x81Fe\xe7\xades\xda\xca\xdfJ\xff" +
-	"q5\xafT%\xd4W\xf1x\xfd\x0a\xb5]\xb7TM" +
-	"\xb7\xd4r\xa7\xc18{h\xdd\xa6\xdb\xbf\x0c_;\xae" +
-	"\xde\xc0I'UN\xfa\xc4\xe9\xe8\xe0\x93?\xde=\x1d" +
-	"\x06\x8c\xa9]\x1c0.\x00\x7f\x8c7\x1c\xefo\xea\xfd" +
-	"\x1e\xe8\xd5\xbe.\xef\xab\xcfs\xc01\x01x\xfd\xc6C" +
-	"%\x97\xf5\xed\xf8!D\xf7\x8cjs\xba3O=^" +
-	"\xfa\xb5s\xf2g7\x94\xf0\xc8\x19u\x0f\xdfQ\xc8\xdf" +
-	"\x0fL\\\xf3\xdc9Wl\xb1s\xd4\xbd\"\xdbs\x1b" +
-	"{z\xfb\xae\xbfB\xa7M\xba;\xfe}\xf3E|E" +
-	"=\xac\xbf\xa1F\x01\xf4I\xb5]?)4L\xa4S" +
-	")\x96\xc8\xa6e\xbb.\x11\xdf\x96\xda\xd6\xb41\xb7`" +
-	"\xd7\xc5X\x82%\x87ef\x1b\x88&\x91\x15\x00\xff\x8e" +
-	"\xe81\xa6\xb4\x0d\xa0u9\xb6^\x8e\xf4zm\xd4\x16" +
-	"!\x8cb\xb5I$\x0cJ\x1f\x11\xa0\xe0b\x0b\x1a\x88" +
-	"\xad\x04)\xb6\x8dnf\x99L\xbc\x97\xf9\x94\xc8\x85\x94" +
-	"\xd80Ke\xb7dm\x16\xb7j\x8dx\xb9\x1d\xb72" +
-	"&\x91\x09\x00\xe1\x09\xca:\x01\xcc\xe52\x9a\x1d\x12:" +
-	"9*6\x00 \x0d\x92\xf2\x94\x170\xe1\xe4\xa2&A" +
-	"D4d\xc4\x88s|G\x87\xf4\xcd\xd0\xaf'\x00\x10" +
-	")\xe0B\x94,\x97u\x8eT\xb3\x11\xff\xdfH\x1d\x9c" +
-	"(\x936\xae^w0\x9fT\x81\xa7\xcb\xb0TOm" +
-	"\xac\x99e\x86\x06\xb2\x99\x85\xd8'\xd2\x96\x15O\xf5\\" +
-	"\x04\xf6\xd6\x8bUg\x0f\xe8]3K\x90\xd4f\xbd\xc9" +
-	"L\x96\xd9\xb5\x82\x0e\xce\xe3\xd3\x9f\xe3s\xa9\xe0\xc3q" +
-	"v\x1c\xca\xb3\xc9t\x0a#\xce\x17\xd3?\x8d\x1b[g" +
-	"_\xe09\"\x85rla\xf60\xf3*\x9b\xf1L\xe2" +
-	"G\xa1\x8b\xb7\x01\x98\xcbd4+$\x1c\xcd\xbd1\xae" +
-	"@\x0c\xac\x05\x00W\x14z\x85\\\x0e\xf1\x04\xfcXy" +
-	"\xa9\x82\x86N\x0e\x04\x0d-\xfe\xd7r\x08\x13\x89\xb1\xcc" +
-	"\x90\x16\xae\x05)_v\xb4\xf9\xe1\xa1i\x85\x9dN," +
-	"\xe0gV\x08\x03\xf0\xa6\x03zvHwu\x82D\xc7" +
-	"4D\xdfB\xd1\x9b>\xf4\xe15 \xd1A\x0d%\x7f" +
-	"b\xa1g[\x94\xd9 \xd1n\x0de\x7f$\xa1\xe7\xe7" +
-	"\xd4\xe4{\x9b4$\xfe(D\xcf<\xe9\xad\xf7\x81D" +
-	"\xd7k\x8eW$B\xadr~\xc9\x16t\xbcf\x84j" +
-	"Q\xd0-\\\x15\xb7\xc0\x83\x15\xcfC@\x13\xff\x0d\x0c" +
-	"\xa4+Y\xacAbnGA\"\xd8/TW\x108" +
-	"\xa67-\xd1s\xf2\x85\x1d\xd3\x7f\xee\xb0c\xce[\\" +
-	"\xc81\x8b9\x81Q\xbd\xa4\xf2\x8e8M\xd1z\xf2\xc4" +
-	"co\xce\x15m\xa0\x02M*4\x91\xb3E\xbb4\x91" +
-	"N\xdd\x9f\xb4\xad\xa0K?\xdb\xbe\x9e\xf4\xf5M\x8d\xe5" +
-	"'Q\x8a\x8d\xa0P\xa3\x16p\x84b\x8d\x1a\xb2\xa2y" +
-	"\x8d\xba\xc8X\x89\xb1\xea\xf9\xae\xb9\x14Z\x9e\x06~P" +
-	"\xd9b\x8eS\xac\x92\x8a\x0d\x96b\xf8f7\x81\xe8\xdd" +
-	"\xe0\xab'\xafw\xddR\xf4\xbe\xcb\xd0\xfb\xfe\xa2\x94\xf7" +
-	"\xa7\xa2\xe5\xba\xc7@\xfc7\x00\x00\xff\xff\x984-\xcf"
+const schema_962b7a64e96c7802 = "x\xda\xbcVkh\x1cU\x14>gfv\xef\xce\xd2" +
+	"\x98\xbd\x9d\xd8\xb5AM\xd4\xa8\xa5\xa5!1\xadB\xd4" +
+	"\xe6Q0i08\xb3\xc5\x1f\x89\x16]7\xd7<\xcc" +
+	"\xee6\xb3\x9b \xa96R-\x1a\x15\xb1JD\xab\xd6" +
+	"\x06Q\xd4\x9a\xa6\xa5\x88P\xf0\x8d/\xa8H\xa3-\xf6" +
+	"\xa7VmK\x15\x09\x12d\xadu\xe4\xde\xd9yd\xbb" +
+	"\x9b\xc4\x1f\xfao\xf7\xde\xef\x9c\xf3\x9ds\xcf\xf9\xce\xd4" +
+	"\xf5\xca\xcdR} ]\x06`\xbc\x14\x08Z\xd3\xfb\xde" +
+	"\xaf\xbamb\xcf\x0e\xa0\x95\xb2\xf5\xd4\x1a\xe5.\xfd\xd4" +
+	"\x86O\x00 \x82\x0d/\x07+Q\x9b\x0a\x12\x00\xed\xcd" +
+	"`\x9b\x96\x0b\x12-\x17,\xb76|<\xd8~\xedC" +
+	"\xe6\x1e\xa0\x95\x08\x10@\x02\xd0\xf0kp\x00\x01\xb5\\" +
+	"\xb0\x09\xd0\x1a\xbd\xa2;\x1c<\xd7\xfe\x8a\x1f\xd0IF" +
+	"9\xa0\x8bp\xc0\xbb\x97'\x1f\xbe\xfdn\xb6\xcf\x06(" +
+	"\xfc~\x8a4\"(\x96\x96\xdb{\x13}\xe1\xc9\xb7\xfd" +
+	"\xa6\x13\xb6\xe9\xa40\xbd\xe3\xbb\xb7.\x8e\xd6\xceN\xfb" +
+	"\x01s$\xc6\x01\x18\xe2\x00\xed\xf4\x87\xd5\x93\xf5\x9d\xef" +
+	"\x01\xad\xb6\x01\x11l\xb8:$<\xd4\x0b\xc0\xb9\xc3+" +
+	".\x9a\xbb\xf1\xe8\x07@\xa3\xae\x07#T)\xd8\x09\xc0" +
+	"\xde\xde\x8a\xeaU\x99/?\xb2\x016\xbb\xd0\x95\x9c\x9d" +
+	"[\x1e\x1a\x91-\xe9\xfe\xc13=\xa3k\x9e\x03@m" +
+	"\"4\xa3M\x86\xa2\x02\xd9\x86\xdaN\x95\x00X'\xff" +
+	"\xbc\xe1d\xdd\xf8\x03\x9f\xfa\xb2L\xaa;\xb8\x9f\xda\x17" +
+	"\x87\xd2\xfbWo\xf9\x1chT\xb6\xde\x08\xcd\x92\x15\xbf" +
+	"\x87\xff\xb6k\xde\xa5J\xa81n\xaf\xc5\xd56\xed\xa0" +
+	"J\xb4\x83j\xb9U\xaf\x9f=\xb4n\xd3\xad_\xfb\xd3" +
+	"~M\xbd\x8e\x93\x9eR9\xe9\xe3\xa7\xa3C\x8f\xfdt" +
+	"\xe7\x8c\x1f\xf0\x95\xda\xcd\x01'\x04\xe0\x8f\x89\xfa#\x03" +
+	"\x8d\xbd?\x00\xbd\xca\xad\xcby\xf5\x19\x0e(\x0bs\xc0" +
+	"\xab\xd7\x1fRW\xf6m\xff\xd1Gwm\xd8\xe4t\x8f" +
+	"=\xbe3\xfc\x8du\xe2\x17\xdbT\xe1\x96+\xc3\xbb\xf9" +
+	"M@9\x7f\xdf\xf45O\xe7\xecb\x8b\x1b5,R" +
+	"d\xbboaOl\xdb\xf5\x97\xcf\xdb\x9c\x9d\xbc\x9bo" +
+	"a\x11\xbfW\x0fkg\xd4(\x806\xa7\xb6i\x97\x85" +
+	"\x09\x1c\xb5\x12\xe9T\x8a%\xb2i\xd9\xacM\xc4\xb7\xa6" +
+	"\xb66n\xcc\x1f\x98\xb51\x96`\xfd#23uD" +
+	"C\x91\x03\x00n\x8e\xe80\xa6\xb4\x15\xa0e\x19\xb6\\" +
+	"\x8at-\x193\x85\x09\xa3Xe(\x12z\xad\x8f\x08" +
+	"P\xf4\xb0\x19u\xc4\x16\x05)\xb6\x8eu\xb2L&\xde" +
+	"\xcb\\J\xca\x85\x94\xd8\x08Ke7gM\x16O\xd6" +
+	"\xe8\xf1r3\x9e\xcc\x18\x8a\xac\x00(<@Y\x07\x80" +
+	"\xb1LF\xa3]B+O\xc5\x04\x00\xa4^P\x1e\xf2" +
+	"\x02&\x9c\\\xd4P\x10\x11u\x191b\x1d\xd9\xde." +
+	"};\xfc\xdbq\x00D\x0a\xb8\x10\xa5\xa4\xcd:O\xaa" +
+	"I\x8f\xffg\xa4\x0eL\x97I\x1bW\xad;PH\xaa" +
+	"\xc8\xd3eX\xaa\xa7&\xd6\xc42\xc3\x83\xd9\xccB\xec" +
+	"\x13\xe9d2\x9e\xea\xf9\x1f\xd8'\x9f\xaf<\xbb_\xeb" +
+	">\xb6\x84\x92\x9a\xac\xb7?\x93ef\x8d\xa0\x83\xf3\xf8" +
+	"\x0c\xe4\xf9\\\"\xf8p\x9c\x19\x87\xf2l\x7f:\x85\x11" +
+	"\xeb\x8b\x99\x9f'\xf4\xaeS\xcf\xf2\x18\x91b163" +
+	"s\x849\x9d\xcdx$\xf1\xa3X\xe2\xad\x00FHF" +
+	"\xa3B\xc2\xb1\xfc\x1b\xe3rDOZ\x00py\xb1W" +
+	"\xc8\xc7\x10O\xc0\xdd\xcaK-\xa8\xcf\xb3WP\xdf\xe1" +
+	"\xbfm\x07?\x91\x18\xcb\x0c\x13\x7f/H\x85eG\x93" +
+	";\xf7m+\xec\xb0b\x1e?\xa3B\x08\x80\xb3\x1d\xd0" +
+	"\x91C\xba\xab\x03$:N\x10]\x09Eg\xfb\xd0\x07" +
+	"W\x83D\x87\x08J\xee\xc6BG\xb6(3A\xa2[" +
+	"\x08\xca\xeeJBG\xcf\xa9\xc1\xef6\x11T\xdcU\x88" +
+	"\x8ex\xd2\x9b\xef\x01\x89\xae'\x96\xd3$\xa2Z\xe5<" +
+	"\xc9f\xb4\x9ca\x84*\xd1\xd0\xcd\xbc*v\x83{'" +
+	"\x8e\x86\x00\x11\xffu\xf4J\xa7.6 1{\xa2 " +
+	"\xe1\xdd\x17\xeb+\xf0\x14\xd3\xd9\x96\xe8(\xf9\xc2\x8a\xe9" +
+	">\xb7_1\xe7\x1d.\xa4\x98\xa5\x94@\xafZR{" +
+	"G\xac\xc6h\x9d\xf2\xe8#\xaf\xcf\x96\x1c\xa0\"C*" +
+	"j\"gKNi\"\x9d\xba\xb7\xdfLzS\xfa\xd9" +
+	"\xb6\xf5J_\xdf;\xe3\x85A\x02\xa5V\x90oP\x8b" +
+	"(B\xa9A\xf5I\xd1\xbcA]d\xad\xc4X\xd5|" +
+	"\xd5\\\x0a-\xa7\x06\xaeQ\xd9b\x8aS\xaa\x93J-" +
+	"\x96R\xf8&;\x80\x98]\xef\xab\xa7`v\xedVt" +
+	"\xbe\xcb\xd0\xf9\xfe\xa2\x94\xcfg\x80\xe4\xa7GG\xfc'" +
+	"\x00\x00\xff\xffG}2B"
 
 func init() {
 	schemas.Register(schema_962b7a64e96c7802,

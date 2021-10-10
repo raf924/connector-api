@@ -1,11 +1,11 @@
 package connector
 
 import (
+	"capnproto.org/go/capnp/v3"
 	"fmt"
 	"github.com/raf924/bot/pkg/domain"
 	"log"
 	"time"
-	capnp "zombiezen.com/go/capnproto2"
 )
 
 func MapCommandMessageToDTO(message *domain.CommandMessage, messageDTO *CommandPacket) error {

@@ -3,9 +3,9 @@
 package connector
 
 import (
-	capnp "zombiezen.com/go/capnproto2"
-	text "zombiezen.com/go/capnproto2/encoding/text"
-	schemas "zombiezen.com/go/capnproto2/schemas"
+	capnp "capnproto.org/go/capnp/v3"
+	text "capnproto.org/go/capnp/v3/encoding/text"
+	schemas "capnproto.org/go/capnp/v3/schemas"
 )
 
 type Timestamp struct{ capnp.Struct }
@@ -24,7 +24,7 @@ func NewRootTimestamp(s *capnp.Segment) (Timestamp, error) {
 }
 
 func ReadRootTimestamp(msg *capnp.Message) (Timestamp, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Timestamp{root.Struct()}, err
 }
 
@@ -59,11 +59,11 @@ func (s Timestamp_List) String() string {
 	return str
 }
 
-// Timestamp_Promise is a wrapper for a Timestamp promised by a client call.
-type Timestamp_Promise struct{ *capnp.Pipeline }
+// Timestamp_Future is a wrapper for a Timestamp promised by a client call.
+type Timestamp_Future struct{ *capnp.Future }
 
-func (p Timestamp_Promise) Struct() (Timestamp, error) {
-	s, err := p.Pipeline.Struct()
+func (p Timestamp_Future) Struct() (Timestamp, error) {
+	s, err := p.Future.Struct()
 	return Timestamp{s}, err
 }
 
@@ -83,7 +83,7 @@ func NewRootCommand(s *capnp.Segment) (Command, error) {
 }
 
 func ReadRootCommand(msg *capnp.Message) (Command, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return Command{root.Struct()}, err
 }
 
@@ -98,8 +98,7 @@ func (s Command) Name() (string, error) {
 }
 
 func (s Command) HasName() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s Command) NameBytes() ([]byte, error) {
@@ -117,8 +116,7 @@ func (s Command) Aliases() (capnp.TextList, error) {
 }
 
 func (s Command) HasAliases() bool {
-	p, err := s.Struct.Ptr(1)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(1)
 }
 
 func (s Command) SetAliases(v capnp.TextList) error {
@@ -142,8 +140,7 @@ func (s Command) Usage() (string, error) {
 }
 
 func (s Command) HasUsage() bool {
-	p, err := s.Struct.Ptr(2)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(2)
 }
 
 func (s Command) UsageBytes() ([]byte, error) {
@@ -173,11 +170,11 @@ func (s Command_List) String() string {
 	return str
 }
 
-// Command_Promise is a wrapper for a Command promised by a client call.
-type Command_Promise struct{ *capnp.Pipeline }
+// Command_Future is a wrapper for a Command promised by a client call.
+type Command_Future struct{ *capnp.Future }
 
-func (p Command_Promise) Struct() (Command, error) {
-	s, err := p.Pipeline.Struct()
+func (p Command_Future) Struct() (Command, error) {
+	s, err := p.Future.Struct()
 	return Command{s}, err
 }
 
@@ -257,7 +254,7 @@ func NewRootUser(s *capnp.Segment) (User, error) {
 }
 
 func ReadRootUser(msg *capnp.Message) (User, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return User{root.Struct()}, err
 }
 
@@ -272,8 +269,7 @@ func (s User) Nick() (string, error) {
 }
 
 func (s User) HasNick() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s User) NickBytes() ([]byte, error) {
@@ -291,8 +287,7 @@ func (s User) Id() (string, error) {
 }
 
 func (s User) HasId() bool {
-	p, err := s.Struct.Ptr(1)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(1)
 }
 
 func (s User) IdBytes() ([]byte, error) {
@@ -318,8 +313,7 @@ func (s User) JoinedAt() (Timestamp, error) {
 }
 
 func (s User) HasJoinedAt() bool {
-	p, err := s.Struct.Ptr(2)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(2)
 }
 
 func (s User) SetJoinedAt(v Timestamp) error {
@@ -355,16 +349,16 @@ func (s User_List) String() string {
 	return str
 }
 
-// User_Promise is a wrapper for a User promised by a client call.
-type User_Promise struct{ *capnp.Pipeline }
+// User_Future is a wrapper for a User promised by a client call.
+type User_Future struct{ *capnp.Future }
 
-func (p User_Promise) Struct() (User, error) {
-	s, err := p.Pipeline.Struct()
+func (p User_Future) Struct() (User, error) {
+	s, err := p.Future.Struct()
 	return User{s}, err
 }
 
-func (p User_Promise) JoinedAt() Timestamp_Promise {
-	return Timestamp_Promise{Pipeline: p.Pipeline.GetPipeline(2)}
+func (p User_Future) JoinedAt() Timestamp_Future {
+	return Timestamp_Future{Future: p.Future.Field(2, nil)}
 }
 
 type IncomingMessagePacket struct{ capnp.Struct }
@@ -383,7 +377,7 @@ func NewRootIncomingMessagePacket(s *capnp.Segment) (IncomingMessagePacket, erro
 }
 
 func ReadRootIncomingMessagePacket(msg *capnp.Message) (IncomingMessagePacket, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return IncomingMessagePacket{root.Struct()}, err
 }
 
@@ -398,8 +392,7 @@ func (s IncomingMessagePacket) Timestamp() (Timestamp, error) {
 }
 
 func (s IncomingMessagePacket) HasTimestamp() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s IncomingMessagePacket) SetTimestamp(v Timestamp) error {
@@ -423,8 +416,7 @@ func (s IncomingMessagePacket) Message() (string, error) {
 }
 
 func (s IncomingMessagePacket) HasMessage() bool {
-	p, err := s.Struct.Ptr(1)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(1)
 }
 
 func (s IncomingMessagePacket) MessageBytes() ([]byte, error) {
@@ -442,8 +434,7 @@ func (s IncomingMessagePacket) Sender() (User, error) {
 }
 
 func (s IncomingMessagePacket) HasSender() bool {
-	p, err := s.Struct.Ptr(2)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(2)
 }
 
 func (s IncomingMessagePacket) SetSender(v User) error {
@@ -475,8 +466,7 @@ func (s IncomingMessagePacket) Recipients() (User_List, error) {
 }
 
 func (s IncomingMessagePacket) HasRecipients() bool {
-	p, err := s.Struct.Ptr(3)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(3)
 }
 
 func (s IncomingMessagePacket) SetRecipients(v User_List) error {
@@ -532,20 +522,20 @@ func (s IncomingMessagePacket_List) String() string {
 	return str
 }
 
-// IncomingMessagePacket_Promise is a wrapper for a IncomingMessagePacket promised by a client call.
-type IncomingMessagePacket_Promise struct{ *capnp.Pipeline }
+// IncomingMessagePacket_Future is a wrapper for a IncomingMessagePacket promised by a client call.
+type IncomingMessagePacket_Future struct{ *capnp.Future }
 
-func (p IncomingMessagePacket_Promise) Struct() (IncomingMessagePacket, error) {
-	s, err := p.Pipeline.Struct()
+func (p IncomingMessagePacket_Future) Struct() (IncomingMessagePacket, error) {
+	s, err := p.Future.Struct()
 	return IncomingMessagePacket{s}, err
 }
 
-func (p IncomingMessagePacket_Promise) Timestamp() Timestamp_Promise {
-	return Timestamp_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+func (p IncomingMessagePacket_Future) Timestamp() Timestamp_Future {
+	return Timestamp_Future{Future: p.Future.Field(0, nil)}
 }
 
-func (p IncomingMessagePacket_Promise) Sender() User_Promise {
-	return User_Promise{Pipeline: p.Pipeline.GetPipeline(2)}
+func (p IncomingMessagePacket_Future) Sender() User_Future {
+	return User_Future{Future: p.Future.Field(2, nil)}
 }
 
 type UserEvent uint16
@@ -619,7 +609,7 @@ func NewRootUserPacket(s *capnp.Segment) (UserPacket, error) {
 }
 
 func ReadRootUserPacket(msg *capnp.Message) (UserPacket, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return UserPacket{root.Struct()}, err
 }
 
@@ -634,8 +624,7 @@ func (s UserPacket) Timestamp() (Timestamp, error) {
 }
 
 func (s UserPacket) HasTimestamp() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s UserPacket) SetTimestamp(v Timestamp) error {
@@ -667,8 +656,7 @@ func (s UserPacket) User() (User, error) {
 }
 
 func (s UserPacket) HasUser() bool {
-	p, err := s.Struct.Ptr(1)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(1)
 }
 
 func (s UserPacket) SetUser(v User) error {
@@ -704,20 +692,20 @@ func (s UserPacket_List) String() string {
 	return str
 }
 
-// UserPacket_Promise is a wrapper for a UserPacket promised by a client call.
-type UserPacket_Promise struct{ *capnp.Pipeline }
+// UserPacket_Future is a wrapper for a UserPacket promised by a client call.
+type UserPacket_Future struct{ *capnp.Future }
 
-func (p UserPacket_Promise) Struct() (UserPacket, error) {
-	s, err := p.Pipeline.Struct()
+func (p UserPacket_Future) Struct() (UserPacket, error) {
+	s, err := p.Future.Struct()
 	return UserPacket{s}, err
 }
 
-func (p UserPacket_Promise) Timestamp() Timestamp_Promise {
-	return Timestamp_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+func (p UserPacket_Future) Timestamp() Timestamp_Future {
+	return Timestamp_Future{Future: p.Future.Field(0, nil)}
 }
 
-func (p UserPacket_Promise) User() User_Promise {
-	return User_Promise{Pipeline: p.Pipeline.GetPipeline(1)}
+func (p UserPacket_Future) User() User_Future {
+	return User_Future{Future: p.Future.Field(1, nil)}
 }
 
 type CommandPacket struct{ capnp.Struct }
@@ -736,7 +724,7 @@ func NewRootCommandPacket(s *capnp.Segment) (CommandPacket, error) {
 }
 
 func ReadRootCommandPacket(msg *capnp.Message) (CommandPacket, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return CommandPacket{root.Struct()}, err
 }
 
@@ -751,8 +739,7 @@ func (s CommandPacket) Timestamp() (Timestamp, error) {
 }
 
 func (s CommandPacket) HasTimestamp() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s CommandPacket) SetTimestamp(v Timestamp) error {
@@ -776,8 +763,7 @@ func (s CommandPacket) Command() (string, error) {
 }
 
 func (s CommandPacket) HasCommand() bool {
-	p, err := s.Struct.Ptr(1)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(1)
 }
 
 func (s CommandPacket) CommandBytes() ([]byte, error) {
@@ -795,8 +781,7 @@ func (s CommandPacket) Sender() (User, error) {
 }
 
 func (s CommandPacket) HasSender() bool {
-	p, err := s.Struct.Ptr(2)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(2)
 }
 
 func (s CommandPacket) SetSender(v User) error {
@@ -828,8 +813,7 @@ func (s CommandPacket) Args() (capnp.TextList, error) {
 }
 
 func (s CommandPacket) HasArgs() bool {
-	p, err := s.Struct.Ptr(3)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(3)
 }
 
 func (s CommandPacket) SetArgs(v capnp.TextList) error {
@@ -853,8 +837,7 @@ func (s CommandPacket) ArgString() (string, error) {
 }
 
 func (s CommandPacket) HasArgString() bool {
-	p, err := s.Struct.Ptr(4)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(4)
 }
 
 func (s CommandPacket) ArgStringBytes() ([]byte, error) {
@@ -884,20 +867,20 @@ func (s CommandPacket_List) String() string {
 	return str
 }
 
-// CommandPacket_Promise is a wrapper for a CommandPacket promised by a client call.
-type CommandPacket_Promise struct{ *capnp.Pipeline }
+// CommandPacket_Future is a wrapper for a CommandPacket promised by a client call.
+type CommandPacket_Future struct{ *capnp.Future }
 
-func (p CommandPacket_Promise) Struct() (CommandPacket, error) {
-	s, err := p.Pipeline.Struct()
+func (p CommandPacket_Future) Struct() (CommandPacket, error) {
+	s, err := p.Future.Struct()
 	return CommandPacket{s}, err
 }
 
-func (p CommandPacket_Promise) Timestamp() Timestamp_Promise {
-	return Timestamp_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+func (p CommandPacket_Future) Timestamp() Timestamp_Future {
+	return Timestamp_Future{Future: p.Future.Field(0, nil)}
 }
 
-func (p CommandPacket_Promise) Sender() User_Promise {
-	return User_Promise{Pipeline: p.Pipeline.GetPipeline(2)}
+func (p CommandPacket_Future) Sender() User_Future {
+	return User_Future{Future: p.Future.Field(2, nil)}
 }
 
 type OutgoingMessagePacket struct{ capnp.Struct }
@@ -916,7 +899,7 @@ func NewRootOutgoingMessagePacket(s *capnp.Segment) (OutgoingMessagePacket, erro
 }
 
 func ReadRootOutgoingMessagePacket(msg *capnp.Message) (OutgoingMessagePacket, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return OutgoingMessagePacket{root.Struct()}, err
 }
 
@@ -931,8 +914,7 @@ func (s OutgoingMessagePacket) Timestamp() (Timestamp, error) {
 }
 
 func (s OutgoingMessagePacket) HasTimestamp() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s OutgoingMessagePacket) SetTimestamp(v Timestamp) error {
@@ -956,8 +938,7 @@ func (s OutgoingMessagePacket) Message() (string, error) {
 }
 
 func (s OutgoingMessagePacket) HasMessage() bool {
-	p, err := s.Struct.Ptr(1)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(1)
 }
 
 func (s OutgoingMessagePacket) MessageBytes() ([]byte, error) {
@@ -975,8 +956,7 @@ func (s OutgoingMessagePacket) Recipient() (User, error) {
 }
 
 func (s OutgoingMessagePacket) HasRecipient() bool {
-	p, err := s.Struct.Ptr(2)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(2)
 }
 
 func (s OutgoingMessagePacket) SetRecipient(v User) error {
@@ -1024,20 +1004,20 @@ func (s OutgoingMessagePacket_List) String() string {
 	return str
 }
 
-// OutgoingMessagePacket_Promise is a wrapper for a OutgoingMessagePacket promised by a client call.
-type OutgoingMessagePacket_Promise struct{ *capnp.Pipeline }
+// OutgoingMessagePacket_Future is a wrapper for a OutgoingMessagePacket promised by a client call.
+type OutgoingMessagePacket_Future struct{ *capnp.Future }
 
-func (p OutgoingMessagePacket_Promise) Struct() (OutgoingMessagePacket, error) {
-	s, err := p.Pipeline.Struct()
+func (p OutgoingMessagePacket_Future) Struct() (OutgoingMessagePacket, error) {
+	s, err := p.Future.Struct()
 	return OutgoingMessagePacket{s}, err
 }
 
-func (p OutgoingMessagePacket_Promise) Timestamp() Timestamp_Promise {
-	return Timestamp_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+func (p OutgoingMessagePacket_Future) Timestamp() Timestamp_Future {
+	return Timestamp_Future{Future: p.Future.Field(0, nil)}
 }
 
-func (p OutgoingMessagePacket_Promise) Recipient() User_Promise {
-	return User_Promise{Pipeline: p.Pipeline.GetPipeline(2)}
+func (p OutgoingMessagePacket_Future) Recipient() User_Future {
+	return User_Future{Future: p.Future.Field(2, nil)}
 }
 
 type RegistrationPacket struct{ capnp.Struct }
@@ -1056,7 +1036,7 @@ func NewRootRegistrationPacket(s *capnp.Segment) (RegistrationPacket, error) {
 }
 
 func ReadRootRegistrationPacket(msg *capnp.Message) (RegistrationPacket, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return RegistrationPacket{root.Struct()}, err
 }
 
@@ -1071,8 +1051,7 @@ func (s RegistrationPacket) Commands() (Command_List, error) {
 }
 
 func (s RegistrationPacket) HasCommands() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s RegistrationPacket) SetCommands(v Command_List) error {
@@ -1112,11 +1091,11 @@ func (s RegistrationPacket_List) String() string {
 	return str
 }
 
-// RegistrationPacket_Promise is a wrapper for a RegistrationPacket promised by a client call.
-type RegistrationPacket_Promise struct{ *capnp.Pipeline }
+// RegistrationPacket_Future is a wrapper for a RegistrationPacket promised by a client call.
+type RegistrationPacket_Future struct{ *capnp.Future }
 
-func (p RegistrationPacket_Promise) Struct() (RegistrationPacket, error) {
-	s, err := p.Pipeline.Struct()
+func (p RegistrationPacket_Future) Struct() (RegistrationPacket, error) {
+	s, err := p.Future.Struct()
 	return RegistrationPacket{s}, err
 }
 
@@ -1136,7 +1115,7 @@ func NewRootConfirmationPacket(s *capnp.Segment) (ConfirmationPacket, error) {
 }
 
 func ReadRootConfirmationPacket(msg *capnp.Message) (ConfirmationPacket, error) {
-	root, err := msg.RootPtr()
+	root, err := msg.Root()
 	return ConfirmationPacket{root.Struct()}, err
 }
 
@@ -1151,8 +1130,7 @@ func (s ConfirmationPacket) BotUser() (User, error) {
 }
 
 func (s ConfirmationPacket) HasBotUser() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(0)
 }
 
 func (s ConfirmationPacket) SetBotUser(v User) error {
@@ -1176,8 +1154,7 @@ func (s ConfirmationPacket) Trigger() (string, error) {
 }
 
 func (s ConfirmationPacket) HasTrigger() bool {
-	p, err := s.Struct.Ptr(1)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(1)
 }
 
 func (s ConfirmationPacket) TriggerBytes() ([]byte, error) {
@@ -1195,8 +1172,7 @@ func (s ConfirmationPacket) Users() (User_List, error) {
 }
 
 func (s ConfirmationPacket) HasUsers() bool {
-	p, err := s.Struct.Ptr(2)
-	return p.IsValid() || err != nil
+	return s.Struct.HasPtr(2)
 }
 
 func (s ConfirmationPacket) SetUsers(v User_List) error {
@@ -1236,89 +1212,89 @@ func (s ConfirmationPacket_List) String() string {
 	return str
 }
 
-// ConfirmationPacket_Promise is a wrapper for a ConfirmationPacket promised by a client call.
-type ConfirmationPacket_Promise struct{ *capnp.Pipeline }
+// ConfirmationPacket_Future is a wrapper for a ConfirmationPacket promised by a client call.
+type ConfirmationPacket_Future struct{ *capnp.Future }
 
-func (p ConfirmationPacket_Promise) Struct() (ConfirmationPacket, error) {
-	s, err := p.Pipeline.Struct()
+func (p ConfirmationPacket_Future) Struct() (ConfirmationPacket, error) {
+	s, err := p.Future.Struct()
 	return ConfirmationPacket{s}, err
 }
 
-func (p ConfirmationPacket_Promise) BotUser() User_Promise {
-	return User_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+func (p ConfirmationPacket_Future) BotUser() User_Future {
+	return User_Future{Future: p.Future.Field(0, nil)}
 }
 
-const schema_824b0dcb3e553a2a = "x\xda\x94U]h\x1cU\x18\xfd\xce\xbd\xbb\xd9\x14\xb2" +
-	"\xdd\x0c\xb3b\x09-\x0b>\xd5P\xa46\x8a\x92\x07S" +
-	"\x1b\x8b\xad\xb64wm\xb1\x16\x85\x8e\xbb\xb7\xdbiw" +
-	"f\x96\x99\xd9\xa2\xd8\x1a\x10E\x02-\xa2R\xda\x80\x05" +
-	"\x03U\xaa\x986)Fl5\x92\x88J\xc4\x8a\xbfQ" +
-	"\xea\x9bP\xec\x83\x8a\x16|\xd0\x07\x19\xb9\xb3?3\x99" +
-	",\xad}\xbb\xdc=\xfb\xdd\xf3\x9ds\xbeo\xd6\x7f\xcd" +
-	"6\xb2;\xd3_q\"\xb1.\xdd\x15|\xf6\xcc\xdd\xa9" +
-	"\xfd\xfbg\xc6H\xcb\"\xe8\x1f\xdcu\xdf\x17\xd9\x87\x9f" +
-	"\xa34\xcf\x10\x0d|\x09\x06\xfd22D\xfa\"\xce\x11" +
-	"\x82\x85o\x7f9>\xf2\xd8\xd5W\x13`\x85\x188\xc2" +
-	"\x18\xf41\xa6\xc0/\xb0!B03}\xa2\xff\xc1\xef" +
-	"\xd6\x9c -\xcb\"0A\xbf\xc0\xce\xeb\xf3!p\x96" +
-	"\xed \x04s\xab\x8fm9zxq\x82D\x16I\x0e" +
-	"\xfa7\xec\x15\xfdr\x08^dW\x09\xc1\xd4\xb9,\x1b" +
-	"^{\xd7T\x12\x9cR\x1c&y\x1f\xf4\xd9\x90\xfb\x05" +
-	"\xfe\x12\x08A\xdf{\xa9\xb1Sg\x9f\x9eN\xc0\x15Z" +
-	"\x97\xe9\x8b\xba\x95V'3\xad\x08['\xfb~=\xab" +
-	"\xefYL\x96\x0e!\xc7\xd2?\xe9\xe3\xea4p<\xfd" +
-	"\xa8\xaa|\xe9\xd9-\xec\xfb\xfa\x1f?$\xd1!\xd7\x7f" +
-	"\xba>\xd6\x91Q\xa7\x7f\xbb\x94p\xb7\xcf\xdd\xfbQ\xf5" +
-	"\xc4\xe6k\xcb\xb4\x18\xcf\\\xd4'B\xe0\xa9\xcc=\x84" +
-	"`\xf0\xd6\xf5\xa9\x17\x9f\x7f\xf3Z'-\x06&2}" +
-	"\xd0\xa7C\xf4dF\x89\xc1?8\x8a\x1f\x8f\xac\xfb\xab" +
-	"\x83y\xfaX\xf7\xdb\xfa\xcb\xdd!\xf5nE\xa1f\x94" +
-	"\x0eJ\xff\x8e\x127jvmp\xd8\xb1\xf7\x99\xaee" +
-	"\xf8\xa6c\x8f\x84\xbf\xd0\x08 zx\x8a(\x05\"m" +
-	"\xf3&\"\xb1\x91Clc\xd0\x80<\xd4\xe5Vu\xf9" +
-	"\x00\x87\x18a\xd0\x18\xcb\x83\x11i\xdb7\x10\x89-\x1c" +
-	"\xa2\xcc0\xfa\xa4\xe3\xef\xf2\xa4\x8b\xde\xc8U\x02z\x09" +
-	"\xa3\xbekV*\xd2E\x0f1\xf4\x10\x0auO\xba\x1e" +
-	"V\x12F8\x12\xf0\x95\xcb\xe8\x16e\xc5\xf4|7I" +
-	"7\xd5\xa6\x9b}\x88H\xf4p\x88\xb5\x0cA\xc9\xb1," +
-	"\xc3.{D\x14=\xd0\xd6*\xf1\x00\xc2\x07vy\xb2" +
-	"\xe0\x16\x9d\xaa\x0cU\x08\xfbZ\xb3IA\xb5[n#" +
-	"\x02\xd3\xb2\x1b\x88F]Y\xa9W\x0d7c9\xe5\x82" +
-	"Q\xb6L{y\x15\xb8\xaaBo\x9b\x98\xd1O$\x1e" +
-	"\xe7\x10\xfbc:\xca>\"\xb1\x97CT\x19\xd0\x94\xd1" +
-	"T\xc02\x87\xa81h\x9c\xe5\xc1\x894K\xb5U\xe5" +
-	"\x10O1\xe4l\xb3t\xb0%\x1f7\xcb\xadc\xceu" +
-	"\xaa\x12\xb9h\xde\x08\xc8\x11\x82\x03\x8ei\xcb\xf2\xfd\xbe" +
-	"R\xa17\x1a\x84\x86\x1d\x09}\xb7\xda%\xc72\xed\xca" +
-	"v\xe9yFE*\x89\xb9\xf4U'\xab\xdb\x9d\xcc\x14" +
-	"\x89\xc4\xbb\x1cb.\xd6\xc9\xacJ\xc4\xfb\x1c\xe2\x93X" +
-	"\"\xe6\x07\x89\xc4\x87\x1cb\x81\x01\xbc\xd1\xc9\xa7\x0a8" +
-	"\xc7!.1h)\x9eG\x8aH\xfb|\x0f\x91X\xe0" +
-	"\x10W\x18\xb44\xf2H\x13i?\x9f'\x12W8\xc4" +
-	"\x9f\x0cZ\x17\xcb\xa3\x8bH\xfb]\x09\xf1\x1b\x87\xf8\x9b" +
-	"!\xf0MKz\xbea\x11j\xcb;\x1b\xb5\x1a=\xb4" +
-	"\xe4\x19\xf2\xa4]\xee\x98\xc8\x9ak\x1e2|\x09\x10\x83" +
-	"\x9ahW\x96\xcc\x9a)m\xe2\xfeu\x82iI[\xa5" +
-	"\xd0\xc3\xb0c\xdb\xb2\xe4;\x057L|\xab\x8a\xd9\x94" +
-	"R\xc9\xde\xba[\x9a\x92\x9d\xa65\x14\xf2\xaf%2|" +
-	"\xa0\x99\xe1U\x0c\x81eV\xab\xa6'K\x94s\xec\xb2" +
-	"\x87\x15\xc4\xb0\"V\x895\xa78\x0cz\xcc\xaeU\xed" +
-	"j\xe3\xca\xae\x93\x1c\xe2t\xcc\xae\x09\xe5\xc2k\x1c\xe2" +
-	"L\xcc\xae7\x94]\xafs\x88w\"\xbb\xdeR\xc0\xd3" +
-	"\x1cb*f\xd7\xa4\x8a\xe8\x99\xa6\xd9\xe9T\xc3\xae\xf9" +
-	"bd\xec\x0d\x9ci\xce\xe5M;\x933\xdcJ\xdb\x11" +
-	"\xf5g\xe5\x83\xe1V\x1e\xf1]\xd3&TZ\x05\x13\xea" +
-	"([:\xef\xb6b\xb4\xc6Z\xca\xb4\xb7\xd8N\xa5\x0c" +
-	"\x1a\xca\x08\xd5\xf06\x0e\xb1\xfbF\xbd\x15\xe4!i\xfb" +
-	"\xc8E\x9b\xbe1\x85\xb9z\xc7m\xb8|o\x0c\xb9\x9b" +
-	"U\x05E\xb4;|[\x1b\x0c\xd7\xcf\x8a~\xa2\xa1\xc6" +
-	"(\xe7\xaar\x9f\x9f\x18\xdc\x1du\xbf\xe2t\x1c\xdc\xd8" +
-	"\x0a*F\xdb\xa6\x9d\x04sSl\xdd\xb4\x92`\x15\xa3" +
-	"u\xd3JB]\x01k\x1c\xe2\xf0\xcdN^4P\xf0" +
-	"\xff\xc7\xf8-\x95d\xd8\xb1ra\xb6\x97:\xd7\x7f\xbd" +
-	"\xaf\xd2\xdeX+O(?w7\xbeJ9\xdb\xb0\xda" +
-	"\xacF\x8d\xaaix2\x99\xa7B=N\xfd\xbf\x00\x00" +
-	"\x00\xff\xff<\x0a-\xda"
+const schema_824b0dcb3e553a2a = "x\xda\x94Uo\x88\x14e\x18\x7f~\xef;\xbb\xee\xc2" +
+	"\xad{\xc3l$\x87\xb2\xd0';*\xd4K\x8c\xfb\xd0" +
+	"\x99\x97\xa4\xa5y\xef\xa6dR\xe0\xb4\xfb\xba\x8e\xee\xcc" +
+	",3\xb3Rd\x1dD\x10\x82\x11\x14\xa1BB\x82\x85" +
+	"E\xf9\x8f\x8c\xb2\x8c32\x94\xf4C\x7f\xae\xa0o\x07" +
+	"\x96\x1f\xea\xa8\x83\x82\xbeM\xbc\xb3\x7ffnn\xd1\xfc" +
+	"\xf6\xf2\xeeo\x9f\xf7y~\x7f\x9eY\xb1\x8c\xafe+" +
+	"3k\xb2DbC&\x1b~\xf3\xc2jm\xf7\xees" +
+	"\x07H/ \x1c\x1e\xdd\xf6\xe0\xb7\x85\xc7^\xa6\x0c_" +
+	"D4\x02\xce`\x14\xd4\xd1\xc8\xf3S\x84\xf0\xf2\xf7\xbf" +
+	"\xbd5\xf1\xd4\x8d7S`(\xf0\x19\x05\xbe\x10\x81?" +
+	"\xe3c\x84\xf0\xdc\x99C\xc3\x8f\xfc\xb0\xec\x10\xe9\x05\x16" +
+	"\x83\x09\xc6,?k\xfc\x13\x01\xe7\xf8\x16B8\xb5\xf4" +
+	"\xb5\x0d\x07\xf7O\x1f#Q@\xba\x07#\xa3\xbda\x14" +
+	"\xb4\xa8\x05\xed\x06!<}\xaa\xc0\xc6\x97\xdf\x7f:\x0d" +
+	"V\x90\x91\x19m\x08\xc6\\t\x9c\xd5^\x07!\x1c\xfa" +
+	"D;p\xf4\xe4\xf3gR\xf0\xa8\xe0\x91\xecy\xe3X" +
+	"V\x9d\x8efU\xc3\xf6\xe1\xa1\xdfO\x1a;\xa6\xd3\xa5" +
+	"3\x0ar1\xfb\x8bqM\x81G\xaed\x9fT\x95\xaf" +
+	"\xbe\xb4\x81\xfd\xd8\xfa\xf3\xa74\x9a)\xf4\xbd\xb9\xaf\x8c" +
+	"\xd59uZ\x99S\xc4\xdd=\xf5\xc0\x97\x8dC\xeb\xe7" +
+	"\x16pq-w\xde\x98\x8e\x80\xdf\xe5\xd6\x10\xc2\xd1;" +
+	"Wh\xaf\xbe\xf2\xde\\?.F\xa6sC0~\x8d" +
+	"\xd039E\x06\xff\xfc ~~\xf1\x9e\xbf\xfb\x88g" +
+	"\\\xc8\x7f`\\\xcaG\xad\xe7O\xd1\xe3a\xd3\xac\xee" +
+	"\x95\xc1}Un6\x9d\xe6\xe8\xb8\xeb\xec\xb2<\xdb\x0c" +
+	",\xd7\x99\x88~\xa1\x09@\x0cp\x8dH\x03\x91\xbe~" +
+	"\x1d\x91X\xcb!61\xe8@\x09\xear\xa3\xba|\x98" +
+	"CL0\xe8\x8c\x95\xc0\x88\xf4\xcd\xab\x94\x958D\x8d" +
+	"a\xf2Y7\xd8\xe6K\x0f\x83\xb1\xaa\x04\x0c\x12&\x03" +
+	"\xcf\xaa\xd7\xa5\x87\x01b\x18 \x94[\xbe\xf4|,&" +
+	"Lp\xa4\xe0\x8b\x09\xa9v+\xb2n\xf9\x81\x97nW" +
+	"\xeb\xb5[x\x94H\x0cp\x88\xe5\x0ca\xd5\xb5m\xd3" +
+	"\xa9\xf9D\x14?\xd0\xe3*\xf5\x00\xa2\x07\xb6\xf9\xb2\xec" +
+	"U\xdc\x86\x8cX\x88\xe6Z\xb6NA\xf5;\xee\"\x02" +
+	"\xd3\x0b\xab\x88&=Yo5Lo\x91\xed\xd6\xcaf" +
+	"\xcd\xb6\x9c\x85U\xe0\xa9\x0a\x83\xbd\xc6\xcca\"\xf14" +
+	"\x87\xd8\x9d\xe0Q\x0e\x11\x89\x9d\x1c\xa2\xc1\x80\x0e\x8d\x96" +
+	"\x02\xd68D\x93A\xe7\xac\x04N\xa4\xdbj\xac\x06\x87" +
+	"x\x8e\xa1\xe8X\xd5\xbd]\xfa\xb8U\xeb\x1e\x8b\x9e\xdb" +
+	"\x90(\xc6y#\xa0H\x08\xf7\xb8\x96#k\x0f\x05\x8a" +
+	"\x85\xc18\x08m9R\xfcnt\xaa\xaem9\xf5\xcd" +
+	"\xd2\xf7\xcd\xbaT\x14s\x19\xa8I\x96\xf6&9W!" +
+	"\x12\x1fs\x88\xa9\xc4$\x17\x94#>\xe5\x10_'\x1c" +
+	"qq\x94H|\xc1!.3\x80\xb7'\xb9\xa4\x80S" +
+	"\x1c\xe2*\x83\xae\xf1\x124\"\xfd\xca\x0e\"q\x99C" +
+	"\\g\xd03(!C\xa4\xcf\x9c%\x12\xd79\xc4_" +
+	"\x0cz\x96\x95\x90%\xd2g\x15\x11\x7fp\x88\x7f\x19\xc2" +
+	"\xc0\xb2\xa5\x1f\x986\xa1\xb9p\xb2I\xbb=C\x97\x9e" +
+	"1_:\xb5\xbe\x8elz\xd6>3\x90\x001\xa8D" +
+	"{\xb2j5-\xe9\x10\x0fnbL[:\xca\x85>" +
+	"\xc6]\xc7\x91\xd5\xc0-{\x91\xe3\xbbU\xac\x0e\x95\x8a" +
+	"\xf6\xee\xdd|\x97l\xb5\xec\xb1\xa8\xfff\xca\xc3{:" +
+	"\x1e^\xc2\x10\xdaV\xa3a\xf9\xb2JE\xd7\xa9\xf9\xc8" +
+	"\x13C>Q\x89uR\x1c\x19=!\xd7\x92^\xb5#" +
+	"J\xae\xc3\x1c\xe2xB\xaecJ\x85\xb79\xc4\x89\x84" +
+	"\\\xef*\xb9\xde\xe1\x10\x1f\xc6r\xbd\xaf\x80\xc79\xc4" +
+	"\xe9\x84\\\x1f)\x8b\x9e\xe8\x88\x9d\xd1\xdar]\xac\xc4" +
+	"\xc2\xdeB\x99N.o[\x99\xa2\xe9\xd5{\x8a\xa8?" +
+	"+\x1dL\xaf\xfeD\xe0Y\x0e\xa1\xde-\x98bG\xc9" +
+	"\xd2\x7f\xb7U\xe25\xd6e\xa6\xb7\xc5\xb6*f\xd0f" +
+	"F\xa8\x817q\x88\xed\xb7\x9a\xad,\xf7I'@1" +
+	"\xde\xf4\xed\x14\x16[}\xb7\xe1\xc2\xbd1\xe6\xadW\x15" +
+	"T\xa3\xb9\xe8m}4Z?\xf9a\xa2\xb1v\x94\x8b" +
+	"\x0d\xb9+H\x05wK+\xa8\xbb}\x83\x9bXA\x95" +
+	"x\xdb\xf4\x9c`\xadK\xac\x9b\xae\x13\xecJ\xbcn\xba" +
+	"Nh)`\x93C\xec\xbf\xdd\xe4\xc5\x81B\xf0?\xe2" +
+	"7\x9f\x92q\xd7.F\xde\x9e\xaf\xdc\xf0\xcd\xbeJ;" +
+	"\x13\xa3<\xa3\xf4\xdc\xde\xfe*\x15\x1d\xd3\xeeu5i" +
+	"6,\xd3\x97i?\x95[\xc9\xd6\xff\x0b\x00\x00\xff\xff" +
+	"\x96\xc6+\xd9"
 
 func init() {
 	schemas.Register(schema_824b0dcb3e553a2a,
