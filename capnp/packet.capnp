@@ -62,10 +62,9 @@ struct CommandPacket {
 }
 
 struct OutgoingMessagePacket {
-    timestamp   @0 :Timestamp;
-    message     @1 :Text;
-    recipient   @2 :User;
-    private     @3 :Bool;
+    message     @0 :Text;
+    recipient   @1 :User;
+    private     @2 :Bool;
 }
 
 struct RegistrationPacket {

@@ -8,13 +8,13 @@ import (
 	"time"
 )
 
-func MapCommandMessageToDTO(message *domain.CommandMessage, messageDTO *CommandPacket) error {
+func MapCommandMessageToDTO(message *domain.CommandMessage, messageDTO CommandPacket) error {
 	err := messageDTO.SetCommand(message.Command())
 	sender, err := messageDTO.NewSender()
 	if err != nil {
 		return err
 	}
-	err = MapUserToDTO(message.Sender(), &sender)
+	err = MapUserToDTO(message.Sender(), sender)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func MapCommandMessageToDTO(message *domain.CommandMessage, messageDTO *CommandP
 	return nil
 }
 
-func MapChatMessageToDTO(message *domain.ChatMessage, messageDTO *IncomingMessagePacket) error {
+func MapChatMessageToDTO(message *domain.ChatMessage, messageDTO IncomingMessagePacket) error {
 	err := messageDTO.SetMessage(message.Message())
 	if err != nil {
 		return err
@@ -54,7 +54,7 @@ func MapChatMessageToDTO(message *domain.ChatMessage, messageDTO *IncomingMessag
 	if err != nil {
 		return err
 	}
-	err = MapUserToDTO(message.Sender(), &sender)
+	err = MapUserToDTO(message.Sender(), sender)
 	if err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func MapChatMessageToDTO(message *domain.ChatMessage, messageDTO *IncomingMessag
 		if err != nil {
 			return err
 		}
-		err = MapUserToDTO(recipient, &recipientDTO)
+		err = MapUserToDTO(recipient, recipientDTO)
 		if err != nil {
 			return err
 		}
@@ -86,12 +86,12 @@ func MapChatMessageToDTO(message *domain.ChatMessage, messageDTO *IncomingMessag
 	return nil
 }
 
-func MapUserEventToDTO(event *domain.UserEvent, userEventDTO *UserPacket) error {
+func MapUserEventToDTO(event *domain.UserEvent, userEventDTO UserPacket) error {
 	user, err := userEventDTO.NewUser()
 	if err != nil {
 		return err
 	}
-	err = MapUserToDTO(event.User(), &user)
+	err = MapUserToDTO(event.User(), user)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func MapUserEventToDTO(event *domain.UserEvent, userEventDTO *UserPacket) error 
 	return nil
 }
 
-func MapUserToDTO(user *domain.User, userDTO *User) error {
+func MapUserToDTO(user *domain.User, userDTO User) error {
 	err := userDTO.SetNick(user.Nick())
 	if err != nil {
 		return err
@@ -169,9 +169,9 @@ func mapTimeToTimestamp(time time.Time, timestamp *Timestamp) error {
 	return nil
 }
 
-func CreateConfirmationPacket(botUser *domain.User, trigger string, users []*domain.User, confirmationPacket *ConfirmationPacket) error {
+func CreateConfirmationPacket(botUser *domain.User, trigger string, users []*domain.User, confirmationPacket ConfirmationPacket) error {
 	botUserDTO, _ := confirmationPacket.NewBotUser()
-	err := MapUserToDTO(botUser, &botUserDTO)
+	err := MapUserToDTO(botUser, botUserDTO)
 	if err != nil {
 		return err
 	}
@@ -185,7 +185,7 @@ func CreateConfirmationPacket(botUser *domain.User, trigger string, users []*dom
 	}
 	for i, user := range users {
 		userDTO, _ := NewUser(confirmationPacket.Segment())
-		err := MapUserToDTO(user, &userDTO)
+		err := MapUserToDTO(user, userDTO)
 		if err != nil {
 			return err
 		}
@@ -233,18 +233,20 @@ func MapDTOToCommandList(commands Command_List) domain.CommandList {
 	return commandList
 }
 
-func MapClientMessageToDTO(message *domain.ClientMessage, packet *OutgoingMessagePacket) error {
+func MapClientMessageToDTO(message *domain.ClientMessage, packet OutgoingMessagePacket) error {
 	err := packet.SetMessage(message.Message())
 	if err != nil {
 		return err
 	}
-	recipient, err := packet.NewRecipient()
-	if err != nil {
-		return err
-	}
-	err = MapUserToDTO(message.Recipient(), &recipient)
-	if err != nil {
-		return err
+	if message.Recipient() != nil {
+		recipient, err := packet.NewRecipient()
+		if err != nil {
+			return err
+		}
+		err = MapUserToDTO(message.Recipient(), recipient)
+		if err != nil {
+			return err
+		}
 	}
 	packet.SetPrivate(message.Private())
 	return nil
@@ -329,16 +331,23 @@ func MapDTOToStrings(list capnp.TextList) []string {
 	return ss
 }
 
-func MapDTOToClientMessage(packet *OutgoingMessagePacket) *domain.ClientMessage {
+func MapDTOToClientMessage(packet OutgoingMessagePacket) *domain.ClientMessage {
+	if !packet.IsValid() {
+		return nil
+	}
 	message, err := packet.Message()
 	if err != nil {
 		return nil
 	}
-	recipient, err := packet.Recipient()
-	if err != nil {
-		return nil
+	var user *domain.User
+	if packet.HasRecipient() {
+		recipient, err := packet.Recipient()
+		if err != nil {
+			return nil
+		}
+		user = MapDTOToUser(recipient)
 	}
-	return domain.NewClientMessage(message, MapDTOToUser(recipient), packet.Private())
+	return domain.NewClientMessage(message, user, packet.Private())
 }
 
 func MapDTOToTime(packet Timestamp) time.Time {

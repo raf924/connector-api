@@ -47,54 +47,6 @@ func (c Connector) Send(ctx context.Context, params func(Connector_send_Params) 
 	ans, release := c.Client.SendCall(ctx, s)
 	return Connector_send_Results_Future{Future: ans.Future()}, release
 }
-func (c Connector) MessageStream(ctx context.Context, params func(Connector_messageStream_Params) error) (Connector_messageStream_Results_Future, capnp.ReleaseFunc) {
-	s := capnp.Send{
-		Method: capnp.Method{
-			InterfaceID:   0xc33ee7505f042b8e,
-			MethodID:      2,
-			InterfaceName: "connector.capnp:Connector",
-			MethodName:    "messageStream",
-		},
-	}
-	if params != nil {
-		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		s.PlaceArgs = func(s capnp.Struct) error { return params(Connector_messageStream_Params{Struct: s}) }
-	}
-	ans, release := c.Client.SendCall(ctx, s)
-	return Connector_messageStream_Results_Future{Future: ans.Future()}, release
-}
-func (c Connector) CommandStream(ctx context.Context, params func(Connector_commandStream_Params) error) (Connector_commandStream_Results_Future, capnp.ReleaseFunc) {
-	s := capnp.Send{
-		Method: capnp.Method{
-			InterfaceID:   0xc33ee7505f042b8e,
-			MethodID:      3,
-			InterfaceName: "connector.capnp:Connector",
-			MethodName:    "commandStream",
-		},
-	}
-	if params != nil {
-		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		s.PlaceArgs = func(s capnp.Struct) error { return params(Connector_commandStream_Params{Struct: s}) }
-	}
-	ans, release := c.Client.SendCall(ctx, s)
-	return Connector_commandStream_Results_Future{Future: ans.Future()}, release
-}
-func (c Connector) EventStream(ctx context.Context, params func(Connector_eventStream_Params) error) (Connector_eventStream_Results_Future, capnp.ReleaseFunc) {
-	s := capnp.Send{
-		Method: capnp.Method{
-			InterfaceID:   0xc33ee7505f042b8e,
-			MethodID:      4,
-			InterfaceName: "connector.capnp:Connector",
-			MethodName:    "eventStream",
-		},
-	}
-	if params != nil {
-		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		s.PlaceArgs = func(s capnp.Struct) error { return params(Connector_eventStream_Params{Struct: s}) }
-	}
-	ans, release := c.Client.SendCall(ctx, s)
-	return Connector_eventStream_Results_Future{Future: ans.Future()}, release
-}
 
 func (c Connector) AddRef() Connector {
 	return Connector{
@@ -111,12 +63,6 @@ type Connector_Server interface {
 	Register(context.Context, Connector_register) error
 
 	Send(context.Context, Connector_send) error
-
-	MessageStream(context.Context, Connector_messageStream) error
-
-	CommandStream(context.Context, Connector_commandStream) error
-
-	EventStream(context.Context, Connector_eventStream) error
 }
 
 // Connector_NewServer creates a new Server from an implementation of Connector_Server.
@@ -135,7 +81,7 @@ func Connector_ServerToClient(s Connector_Server, policy *server.Policy) Connect
 // This can be used to create a more complicated Server.
 func Connector_Methods(methods []server.Method, s Connector_Server) []server.Method {
 	if cap(methods) == 0 {
-		methods = make([]server.Method, 0, 5)
+		methods = make([]server.Method, 0, 2)
 	}
 
 	methods = append(methods, server.Method{
@@ -159,42 +105,6 @@ func Connector_Methods(methods []server.Method, s Connector_Server) []server.Met
 		},
 		Impl: func(ctx context.Context, call *server.Call) error {
 			return s.Send(ctx, Connector_send{call})
-		},
-	})
-
-	methods = append(methods, server.Method{
-		Method: capnp.Method{
-			InterfaceID:   0xc33ee7505f042b8e,
-			MethodID:      2,
-			InterfaceName: "connector.capnp:Connector",
-			MethodName:    "messageStream",
-		},
-		Impl: func(ctx context.Context, call *server.Call) error {
-			return s.MessageStream(ctx, Connector_messageStream{call})
-		},
-	})
-
-	methods = append(methods, server.Method{
-		Method: capnp.Method{
-			InterfaceID:   0xc33ee7505f042b8e,
-			MethodID:      3,
-			InterfaceName: "connector.capnp:Connector",
-			MethodName:    "commandStream",
-		},
-		Impl: func(ctx context.Context, call *server.Call) error {
-			return s.CommandStream(ctx, Connector_commandStream{call})
-		},
-	})
-
-	methods = append(methods, server.Method{
-		Method: capnp.Method{
-			InterfaceID:   0xc33ee7505f042b8e,
-			MethodID:      4,
-			InterfaceName: "connector.capnp:Connector",
-			MethodName:    "eventStream",
-		},
-		Impl: func(ctx context.Context, call *server.Call) error {
-			return s.EventStream(ctx, Connector_eventStream{call})
 		},
 	})
 
@@ -233,271 +143,6 @@ func (c Connector_send) Args() Connector_send_Params {
 func (c Connector_send) AllocResults() (Connector_send_Results, error) {
 	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
 	return Connector_send_Results{Struct: r}, err
-}
-
-// Connector_messageStream holds the state for a server call to Connector.messageStream.
-// See server.Call for documentation.
-type Connector_messageStream struct {
-	*server.Call
-}
-
-// Args returns the call's arguments.
-func (c Connector_messageStream) Args() Connector_messageStream_Params {
-	return Connector_messageStream_Params{Struct: c.Call.Args()}
-}
-
-// AllocResults allocates the results struct.
-func (c Connector_messageStream) AllocResults() (Connector_messageStream_Results, error) {
-	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Connector_messageStream_Results{Struct: r}, err
-}
-
-// Connector_commandStream holds the state for a server call to Connector.commandStream.
-// See server.Call for documentation.
-type Connector_commandStream struct {
-	*server.Call
-}
-
-// Args returns the call's arguments.
-func (c Connector_commandStream) Args() Connector_commandStream_Params {
-	return Connector_commandStream_Params{Struct: c.Call.Args()}
-}
-
-// AllocResults allocates the results struct.
-func (c Connector_commandStream) AllocResults() (Connector_commandStream_Results, error) {
-	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Connector_commandStream_Results{Struct: r}, err
-}
-
-// Connector_eventStream holds the state for a server call to Connector.eventStream.
-// See server.Call for documentation.
-type Connector_eventStream struct {
-	*server.Call
-}
-
-// Args returns the call's arguments.
-func (c Connector_eventStream) Args() Connector_eventStream_Params {
-	return Connector_eventStream_Params{Struct: c.Call.Args()}
-}
-
-// AllocResults allocates the results struct.
-func (c Connector_eventStream) AllocResults() (Connector_eventStream_Results, error) {
-	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Connector_eventStream_Results{Struct: r}, err
-}
-
-type Connector_Receiver struct{ Client *capnp.Client }
-
-// Connector_Receiver_TypeID is the unique identifier for the type Connector_Receiver.
-const Connector_Receiver_TypeID = 0x829e954f1fbeabaf
-
-func (c Connector_Receiver) Receive(ctx context.Context, params func(Connector_Receiver_receive_Params) error) (Connector_Receiver_receive_Results_Future, capnp.ReleaseFunc) {
-	s := capnp.Send{
-		Method: capnp.Method{
-			InterfaceID:   0x829e954f1fbeabaf,
-			MethodID:      0,
-			InterfaceName: "connector.capnp:Connector.Receiver",
-			MethodName:    "receive",
-		},
-	}
-	if params != nil {
-		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		s.PlaceArgs = func(s capnp.Struct) error { return params(Connector_Receiver_receive_Params{Struct: s}) }
-	}
-	ans, release := c.Client.SendCall(ctx, s)
-	return Connector_Receiver_receive_Results_Future{Future: ans.Future()}, release
-}
-
-func (c Connector_Receiver) AddRef() Connector_Receiver {
-	return Connector_Receiver{
-		Client: c.Client.AddRef(),
-	}
-}
-
-func (c Connector_Receiver) Release() {
-	c.Client.Release()
-}
-
-// A Connector_Receiver_Server is a Connector_Receiver with a local implementation.
-type Connector_Receiver_Server interface {
-	Receive(context.Context, Connector_Receiver_receive) error
-}
-
-// Connector_Receiver_NewServer creates a new Server from an implementation of Connector_Receiver_Server.
-func Connector_Receiver_NewServer(s Connector_Receiver_Server, policy *server.Policy) *server.Server {
-	c, _ := s.(server.Shutdowner)
-	return server.New(Connector_Receiver_Methods(nil, s), s, c, policy)
-}
-
-// Connector_Receiver_ServerToClient creates a new Client from an implementation of Connector_Receiver_Server.
-// The caller is responsible for calling Release on the returned Client.
-func Connector_Receiver_ServerToClient(s Connector_Receiver_Server, policy *server.Policy) Connector_Receiver {
-	return Connector_Receiver{Client: capnp.NewClient(Connector_Receiver_NewServer(s, policy))}
-}
-
-// Connector_Receiver_Methods appends Methods to a slice that invoke the methods on s.
-// This can be used to create a more complicated Server.
-func Connector_Receiver_Methods(methods []server.Method, s Connector_Receiver_Server) []server.Method {
-	if cap(methods) == 0 {
-		methods = make([]server.Method, 0, 1)
-	}
-
-	methods = append(methods, server.Method{
-		Method: capnp.Method{
-			InterfaceID:   0x829e954f1fbeabaf,
-			MethodID:      0,
-			InterfaceName: "connector.capnp:Connector.Receiver",
-			MethodName:    "receive",
-		},
-		Impl: func(ctx context.Context, call *server.Call) error {
-			return s.Receive(ctx, Connector_Receiver_receive{call})
-		},
-	})
-
-	return methods
-}
-
-// Connector_Receiver_receive holds the state for a server call to Connector_Receiver.receive.
-// See server.Call for documentation.
-type Connector_Receiver_receive struct {
-	*server.Call
-}
-
-// Args returns the call's arguments.
-func (c Connector_Receiver_receive) Args() Connector_Receiver_receive_Params {
-	return Connector_Receiver_receive_Params{Struct: c.Call.Args()}
-}
-
-// AllocResults allocates the results struct.
-func (c Connector_Receiver_receive) AllocResults() (Connector_Receiver_receive_Results, error) {
-	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Connector_Receiver_receive_Results{Struct: r}, err
-}
-
-type Connector_Receiver_receive_Params struct{ capnp.Struct }
-
-// Connector_Receiver_receive_Params_TypeID is the unique identifier for the type Connector_Receiver_receive_Params.
-const Connector_Receiver_receive_Params_TypeID = 0xe2673a6acc3195f7
-
-func NewConnector_Receiver_receive_Params(s *capnp.Segment) (Connector_Receiver_receive_Params, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Connector_Receiver_receive_Params{st}, err
-}
-
-func NewRootConnector_Receiver_receive_Params(s *capnp.Segment) (Connector_Receiver_receive_Params, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Connector_Receiver_receive_Params{st}, err
-}
-
-func ReadRootConnector_Receiver_receive_Params(msg *capnp.Message) (Connector_Receiver_receive_Params, error) {
-	root, err := msg.Root()
-	return Connector_Receiver_receive_Params{root.Struct()}, err
-}
-
-func (s Connector_Receiver_receive_Params) String() string {
-	str, _ := text.Marshal(0xe2673a6acc3195f7, s.Struct)
-	return str
-}
-
-func (s Connector_Receiver_receive_Params) Message() (capnp.Ptr, error) {
-	return s.Struct.Ptr(0)
-}
-
-func (s Connector_Receiver_receive_Params) HasMessage() bool {
-	return s.Struct.HasPtr(0)
-}
-
-func (s Connector_Receiver_receive_Params) SetMessage(v capnp.Ptr) error {
-	return s.Struct.SetPtr(0, v)
-}
-
-// Connector_Receiver_receive_Params_List is a list of Connector_Receiver_receive_Params.
-type Connector_Receiver_receive_Params_List struct{ capnp.List }
-
-// NewConnector_Receiver_receive_Params creates a new list of Connector_Receiver_receive_Params.
-func NewConnector_Receiver_receive_Params_List(s *capnp.Segment, sz int32) (Connector_Receiver_receive_Params_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
-	return Connector_Receiver_receive_Params_List{l}, err
-}
-
-func (s Connector_Receiver_receive_Params_List) At(i int) Connector_Receiver_receive_Params {
-	return Connector_Receiver_receive_Params{s.List.Struct(i)}
-}
-
-func (s Connector_Receiver_receive_Params_List) Set(i int, v Connector_Receiver_receive_Params) error {
-	return s.List.SetStruct(i, v.Struct)
-}
-
-func (s Connector_Receiver_receive_Params_List) String() string {
-	str, _ := text.MarshalList(0xe2673a6acc3195f7, s.List)
-	return str
-}
-
-// Connector_Receiver_receive_Params_Future is a wrapper for a Connector_Receiver_receive_Params promised by a client call.
-type Connector_Receiver_receive_Params_Future struct{ *capnp.Future }
-
-func (p Connector_Receiver_receive_Params_Future) Struct() (Connector_Receiver_receive_Params, error) {
-	s, err := p.Future.Struct()
-	return Connector_Receiver_receive_Params{s}, err
-}
-
-func (p Connector_Receiver_receive_Params_Future) Message() *capnp.Future {
-	return p.Future.Field(0, nil)
-}
-
-type Connector_Receiver_receive_Results struct{ capnp.Struct }
-
-// Connector_Receiver_receive_Results_TypeID is the unique identifier for the type Connector_Receiver_receive_Results.
-const Connector_Receiver_receive_Results_TypeID = 0xecd9ffd30a858ad5
-
-func NewConnector_Receiver_receive_Results(s *capnp.Segment) (Connector_Receiver_receive_Results, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Connector_Receiver_receive_Results{st}, err
-}
-
-func NewRootConnector_Receiver_receive_Results(s *capnp.Segment) (Connector_Receiver_receive_Results, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Connector_Receiver_receive_Results{st}, err
-}
-
-func ReadRootConnector_Receiver_receive_Results(msg *capnp.Message) (Connector_Receiver_receive_Results, error) {
-	root, err := msg.Root()
-	return Connector_Receiver_receive_Results{root.Struct()}, err
-}
-
-func (s Connector_Receiver_receive_Results) String() string {
-	str, _ := text.Marshal(0xecd9ffd30a858ad5, s.Struct)
-	return str
-}
-
-// Connector_Receiver_receive_Results_List is a list of Connector_Receiver_receive_Results.
-type Connector_Receiver_receive_Results_List struct{ capnp.List }
-
-// NewConnector_Receiver_receive_Results creates a new list of Connector_Receiver_receive_Results.
-func NewConnector_Receiver_receive_Results_List(s *capnp.Segment, sz int32) (Connector_Receiver_receive_Results_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0}, sz)
-	return Connector_Receiver_receive_Results_List{l}, err
-}
-
-func (s Connector_Receiver_receive_Results_List) At(i int) Connector_Receiver_receive_Results {
-	return Connector_Receiver_receive_Results{s.List.Struct(i)}
-}
-
-func (s Connector_Receiver_receive_Results_List) Set(i int, v Connector_Receiver_receive_Results) error {
-	return s.List.SetStruct(i, v.Struct)
-}
-
-func (s Connector_Receiver_receive_Results_List) String() string {
-	str, _ := text.MarshalList(0xecd9ffd30a858ad5, s.List)
-	return str
-}
-
-// Connector_Receiver_receive_Results_Future is a wrapper for a Connector_Receiver_receive_Results promised by a client call.
-type Connector_Receiver_receive_Results_Future struct{ *capnp.Future }
-
-func (p Connector_Receiver_receive_Results_Future) Struct() (Connector_Receiver_receive_Results, error) {
-	s, err := p.Future.Struct()
-	return Connector_Receiver_receive_Results{s}, err
 }
 
 type Connector_register_Params struct{ capnp.Struct }
@@ -804,928 +449,660 @@ func (p Connector_send_Results_Future) Struct() (Connector_send_Results, error) 
 	return Connector_send_Results{s}, err
 }
 
-type Connector_messageStream_Params struct{ capnp.Struct }
+type Dispatcher struct{ Client *capnp.Client }
 
-// Connector_messageStream_Params_TypeID is the unique identifier for the type Connector_messageStream_Params.
-const Connector_messageStream_Params_TypeID = 0x9f48fb060a5a217a
+// Dispatcher_TypeID is the unique identifier for the type Dispatcher.
+const Dispatcher_TypeID = 0xa481e3c400456884
 
-func NewConnector_messageStream_Params(s *capnp.Segment) (Connector_messageStream_Params, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Connector_messageStream_Params{st}, err
-}
-
-func NewRootConnector_messageStream_Params(s *capnp.Segment) (Connector_messageStream_Params, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Connector_messageStream_Params{st}, err
-}
-
-func ReadRootConnector_messageStream_Params(msg *capnp.Message) (Connector_messageStream_Params, error) {
-	root, err := msg.Root()
-	return Connector_messageStream_Params{root.Struct()}, err
-}
-
-func (s Connector_messageStream_Params) String() string {
-	str, _ := text.Marshal(0x9f48fb060a5a217a, s.Struct)
-	return str
-}
-
-func (s Connector_messageStream_Params) Receiver() Connector_Receiver {
-	p, _ := s.Struct.Ptr(0)
-	return Connector_Receiver{Client: p.Interface().Client()}
-}
-
-func (s Connector_messageStream_Params) HasReceiver() bool {
-	return s.Struct.HasPtr(0)
-}
-
-func (s Connector_messageStream_Params) SetReceiver(v Connector_Receiver) error {
-	if !v.Client.IsValid() {
-		return s.Struct.SetPtr(0, capnp.Ptr{})
-	}
-	seg := s.Segment()
-	in := capnp.NewInterface(seg, seg.Message().AddCap(v.Client))
-	return s.Struct.SetPtr(0, in.ToPtr())
-}
-
-// Connector_messageStream_Params_List is a list of Connector_messageStream_Params.
-type Connector_messageStream_Params_List struct{ capnp.List }
-
-// NewConnector_messageStream_Params creates a new list of Connector_messageStream_Params.
-func NewConnector_messageStream_Params_List(s *capnp.Segment, sz int32) (Connector_messageStream_Params_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
-	return Connector_messageStream_Params_List{l}, err
-}
-
-func (s Connector_messageStream_Params_List) At(i int) Connector_messageStream_Params {
-	return Connector_messageStream_Params{s.List.Struct(i)}
-}
-
-func (s Connector_messageStream_Params_List) Set(i int, v Connector_messageStream_Params) error {
-	return s.List.SetStruct(i, v.Struct)
-}
-
-func (s Connector_messageStream_Params_List) String() string {
-	str, _ := text.MarshalList(0x9f48fb060a5a217a, s.List)
-	return str
-}
-
-// Connector_messageStream_Params_Future is a wrapper for a Connector_messageStream_Params promised by a client call.
-type Connector_messageStream_Params_Future struct{ *capnp.Future }
-
-func (p Connector_messageStream_Params_Future) Struct() (Connector_messageStream_Params, error) {
-	s, err := p.Future.Struct()
-	return Connector_messageStream_Params{s}, err
-}
-
-func (p Connector_messageStream_Params_Future) Receiver() Connector_Receiver {
-	return Connector_Receiver{Client: p.Future.Field(0, nil).Client()}
-}
-
-type Connector_messageStream_Results struct{ capnp.Struct }
-
-// Connector_messageStream_Results_TypeID is the unique identifier for the type Connector_messageStream_Results.
-const Connector_messageStream_Results_TypeID = 0xfc917b8b65469a65
-
-func NewConnector_messageStream_Results(s *capnp.Segment) (Connector_messageStream_Results, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Connector_messageStream_Results{st}, err
-}
-
-func NewRootConnector_messageStream_Results(s *capnp.Segment) (Connector_messageStream_Results, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Connector_messageStream_Results{st}, err
-}
-
-func ReadRootConnector_messageStream_Results(msg *capnp.Message) (Connector_messageStream_Results, error) {
-	root, err := msg.Root()
-	return Connector_messageStream_Results{root.Struct()}, err
-}
-
-func (s Connector_messageStream_Results) String() string {
-	str, _ := text.Marshal(0xfc917b8b65469a65, s.Struct)
-	return str
-}
-
-// Connector_messageStream_Results_List is a list of Connector_messageStream_Results.
-type Connector_messageStream_Results_List struct{ capnp.List }
-
-// NewConnector_messageStream_Results creates a new list of Connector_messageStream_Results.
-func NewConnector_messageStream_Results_List(s *capnp.Segment, sz int32) (Connector_messageStream_Results_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0}, sz)
-	return Connector_messageStream_Results_List{l}, err
-}
-
-func (s Connector_messageStream_Results_List) At(i int) Connector_messageStream_Results {
-	return Connector_messageStream_Results{s.List.Struct(i)}
-}
-
-func (s Connector_messageStream_Results_List) Set(i int, v Connector_messageStream_Results) error {
-	return s.List.SetStruct(i, v.Struct)
-}
-
-func (s Connector_messageStream_Results_List) String() string {
-	str, _ := text.MarshalList(0xfc917b8b65469a65, s.List)
-	return str
-}
-
-// Connector_messageStream_Results_Future is a wrapper for a Connector_messageStream_Results promised by a client call.
-type Connector_messageStream_Results_Future struct{ *capnp.Future }
-
-func (p Connector_messageStream_Results_Future) Struct() (Connector_messageStream_Results, error) {
-	s, err := p.Future.Struct()
-	return Connector_messageStream_Results{s}, err
-}
-
-type Connector_commandStream_Params struct{ capnp.Struct }
-
-// Connector_commandStream_Params_TypeID is the unique identifier for the type Connector_commandStream_Params.
-const Connector_commandStream_Params_TypeID = 0xac8c99113ca0f913
-
-func NewConnector_commandStream_Params(s *capnp.Segment) (Connector_commandStream_Params, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Connector_commandStream_Params{st}, err
-}
-
-func NewRootConnector_commandStream_Params(s *capnp.Segment) (Connector_commandStream_Params, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Connector_commandStream_Params{st}, err
-}
-
-func ReadRootConnector_commandStream_Params(msg *capnp.Message) (Connector_commandStream_Params, error) {
-	root, err := msg.Root()
-	return Connector_commandStream_Params{root.Struct()}, err
-}
-
-func (s Connector_commandStream_Params) String() string {
-	str, _ := text.Marshal(0xac8c99113ca0f913, s.Struct)
-	return str
-}
-
-func (s Connector_commandStream_Params) Receiver() Connector_Receiver {
-	p, _ := s.Struct.Ptr(0)
-	return Connector_Receiver{Client: p.Interface().Client()}
-}
-
-func (s Connector_commandStream_Params) HasReceiver() bool {
-	return s.Struct.HasPtr(0)
-}
-
-func (s Connector_commandStream_Params) SetReceiver(v Connector_Receiver) error {
-	if !v.Client.IsValid() {
-		return s.Struct.SetPtr(0, capnp.Ptr{})
-	}
-	seg := s.Segment()
-	in := capnp.NewInterface(seg, seg.Message().AddCap(v.Client))
-	return s.Struct.SetPtr(0, in.ToPtr())
-}
-
-// Connector_commandStream_Params_List is a list of Connector_commandStream_Params.
-type Connector_commandStream_Params_List struct{ capnp.List }
-
-// NewConnector_commandStream_Params creates a new list of Connector_commandStream_Params.
-func NewConnector_commandStream_Params_List(s *capnp.Segment, sz int32) (Connector_commandStream_Params_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
-	return Connector_commandStream_Params_List{l}, err
-}
-
-func (s Connector_commandStream_Params_List) At(i int) Connector_commandStream_Params {
-	return Connector_commandStream_Params{s.List.Struct(i)}
-}
-
-func (s Connector_commandStream_Params_List) Set(i int, v Connector_commandStream_Params) error {
-	return s.List.SetStruct(i, v.Struct)
-}
-
-func (s Connector_commandStream_Params_List) String() string {
-	str, _ := text.MarshalList(0xac8c99113ca0f913, s.List)
-	return str
-}
-
-// Connector_commandStream_Params_Future is a wrapper for a Connector_commandStream_Params promised by a client call.
-type Connector_commandStream_Params_Future struct{ *capnp.Future }
-
-func (p Connector_commandStream_Params_Future) Struct() (Connector_commandStream_Params, error) {
-	s, err := p.Future.Struct()
-	return Connector_commandStream_Params{s}, err
-}
-
-func (p Connector_commandStream_Params_Future) Receiver() Connector_Receiver {
-	return Connector_Receiver{Client: p.Future.Field(0, nil).Client()}
-}
-
-type Connector_commandStream_Results struct{ capnp.Struct }
-
-// Connector_commandStream_Results_TypeID is the unique identifier for the type Connector_commandStream_Results.
-const Connector_commandStream_Results_TypeID = 0xc57c8930e337fae3
-
-func NewConnector_commandStream_Results(s *capnp.Segment) (Connector_commandStream_Results, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Connector_commandStream_Results{st}, err
-}
-
-func NewRootConnector_commandStream_Results(s *capnp.Segment) (Connector_commandStream_Results, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Connector_commandStream_Results{st}, err
-}
-
-func ReadRootConnector_commandStream_Results(msg *capnp.Message) (Connector_commandStream_Results, error) {
-	root, err := msg.Root()
-	return Connector_commandStream_Results{root.Struct()}, err
-}
-
-func (s Connector_commandStream_Results) String() string {
-	str, _ := text.Marshal(0xc57c8930e337fae3, s.Struct)
-	return str
-}
-
-// Connector_commandStream_Results_List is a list of Connector_commandStream_Results.
-type Connector_commandStream_Results_List struct{ capnp.List }
-
-// NewConnector_commandStream_Results creates a new list of Connector_commandStream_Results.
-func NewConnector_commandStream_Results_List(s *capnp.Segment, sz int32) (Connector_commandStream_Results_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0}, sz)
-	return Connector_commandStream_Results_List{l}, err
-}
-
-func (s Connector_commandStream_Results_List) At(i int) Connector_commandStream_Results {
-	return Connector_commandStream_Results{s.List.Struct(i)}
-}
-
-func (s Connector_commandStream_Results_List) Set(i int, v Connector_commandStream_Results) error {
-	return s.List.SetStruct(i, v.Struct)
-}
-
-func (s Connector_commandStream_Results_List) String() string {
-	str, _ := text.MarshalList(0xc57c8930e337fae3, s.List)
-	return str
-}
-
-// Connector_commandStream_Results_Future is a wrapper for a Connector_commandStream_Results promised by a client call.
-type Connector_commandStream_Results_Future struct{ *capnp.Future }
-
-func (p Connector_commandStream_Results_Future) Struct() (Connector_commandStream_Results, error) {
-	s, err := p.Future.Struct()
-	return Connector_commandStream_Results{s}, err
-}
-
-type Connector_eventStream_Params struct{ capnp.Struct }
-
-// Connector_eventStream_Params_TypeID is the unique identifier for the type Connector_eventStream_Params.
-const Connector_eventStream_Params_TypeID = 0x9e728027486cc23e
-
-func NewConnector_eventStream_Params(s *capnp.Segment) (Connector_eventStream_Params, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Connector_eventStream_Params{st}, err
-}
-
-func NewRootConnector_eventStream_Params(s *capnp.Segment) (Connector_eventStream_Params, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Connector_eventStream_Params{st}, err
-}
-
-func ReadRootConnector_eventStream_Params(msg *capnp.Message) (Connector_eventStream_Params, error) {
-	root, err := msg.Root()
-	return Connector_eventStream_Params{root.Struct()}, err
-}
-
-func (s Connector_eventStream_Params) String() string {
-	str, _ := text.Marshal(0x9e728027486cc23e, s.Struct)
-	return str
-}
-
-func (s Connector_eventStream_Params) Receiver() Connector_Receiver {
-	p, _ := s.Struct.Ptr(0)
-	return Connector_Receiver{Client: p.Interface().Client()}
-}
-
-func (s Connector_eventStream_Params) HasReceiver() bool {
-	return s.Struct.HasPtr(0)
-}
-
-func (s Connector_eventStream_Params) SetReceiver(v Connector_Receiver) error {
-	if !v.Client.IsValid() {
-		return s.Struct.SetPtr(0, capnp.Ptr{})
-	}
-	seg := s.Segment()
-	in := capnp.NewInterface(seg, seg.Message().AddCap(v.Client))
-	return s.Struct.SetPtr(0, in.ToPtr())
-}
-
-// Connector_eventStream_Params_List is a list of Connector_eventStream_Params.
-type Connector_eventStream_Params_List struct{ capnp.List }
-
-// NewConnector_eventStream_Params creates a new list of Connector_eventStream_Params.
-func NewConnector_eventStream_Params_List(s *capnp.Segment, sz int32) (Connector_eventStream_Params_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
-	return Connector_eventStream_Params_List{l}, err
-}
-
-func (s Connector_eventStream_Params_List) At(i int) Connector_eventStream_Params {
-	return Connector_eventStream_Params{s.List.Struct(i)}
-}
-
-func (s Connector_eventStream_Params_List) Set(i int, v Connector_eventStream_Params) error {
-	return s.List.SetStruct(i, v.Struct)
-}
-
-func (s Connector_eventStream_Params_List) String() string {
-	str, _ := text.MarshalList(0x9e728027486cc23e, s.List)
-	return str
-}
-
-// Connector_eventStream_Params_Future is a wrapper for a Connector_eventStream_Params promised by a client call.
-type Connector_eventStream_Params_Future struct{ *capnp.Future }
-
-func (p Connector_eventStream_Params_Future) Struct() (Connector_eventStream_Params, error) {
-	s, err := p.Future.Struct()
-	return Connector_eventStream_Params{s}, err
-}
-
-func (p Connector_eventStream_Params_Future) Receiver() Connector_Receiver {
-	return Connector_Receiver{Client: p.Future.Field(0, nil).Client()}
-}
-
-type Connector_eventStream_Results struct{ capnp.Struct }
-
-// Connector_eventStream_Results_TypeID is the unique identifier for the type Connector_eventStream_Results.
-const Connector_eventStream_Results_TypeID = 0xe47e681909b336a3
-
-func NewConnector_eventStream_Results(s *capnp.Segment) (Connector_eventStream_Results, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Connector_eventStream_Results{st}, err
-}
-
-func NewRootConnector_eventStream_Results(s *capnp.Segment) (Connector_eventStream_Results, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Connector_eventStream_Results{st}, err
-}
-
-func ReadRootConnector_eventStream_Results(msg *capnp.Message) (Connector_eventStream_Results, error) {
-	root, err := msg.Root()
-	return Connector_eventStream_Results{root.Struct()}, err
-}
-
-func (s Connector_eventStream_Results) String() string {
-	str, _ := text.Marshal(0xe47e681909b336a3, s.Struct)
-	return str
-}
-
-// Connector_eventStream_Results_List is a list of Connector_eventStream_Results.
-type Connector_eventStream_Results_List struct{ capnp.List }
-
-// NewConnector_eventStream_Results creates a new list of Connector_eventStream_Results.
-func NewConnector_eventStream_Results_List(s *capnp.Segment, sz int32) (Connector_eventStream_Results_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0}, sz)
-	return Connector_eventStream_Results_List{l}, err
-}
-
-func (s Connector_eventStream_Results_List) At(i int) Connector_eventStream_Results {
-	return Connector_eventStream_Results{s.List.Struct(i)}
-}
-
-func (s Connector_eventStream_Results_List) Set(i int, v Connector_eventStream_Results) error {
-	return s.List.SetStruct(i, v.Struct)
-}
-
-func (s Connector_eventStream_Results_List) String() string {
-	str, _ := text.MarshalList(0xe47e681909b336a3, s.List)
-	return str
-}
-
-// Connector_eventStream_Results_Future is a wrapper for a Connector_eventStream_Results promised by a client call.
-type Connector_eventStream_Results_Future struct{ *capnp.Future }
-
-func (p Connector_eventStream_Results_Future) Struct() (Connector_eventStream_Results, error) {
-	s, err := p.Future.Struct()
-	return Connector_eventStream_Results{s}, err
-}
-
-type Server struct{ Client *capnp.Client }
-
-// Server_TypeID is the unique identifier for the type Server.
-const Server_TypeID = 0xfe0af31607f108a8
-
-func (c Server) Send(ctx context.Context, params func(Server_send_Params) error) (Server_send_Results_Future, capnp.ReleaseFunc) {
+func (c Dispatcher) DispatchMessage(ctx context.Context, params func(Dispatcher_dispatchMessage_Params) error) (Dispatcher_dispatchMessage_Results_Future, capnp.ReleaseFunc) {
 	s := capnp.Send{
 		Method: capnp.Method{
-			InterfaceID:   0xfe0af31607f108a8,
+			InterfaceID:   0xa481e3c400456884,
 			MethodID:      0,
-			InterfaceName: "connector.capnp:Server",
-			MethodName:    "send",
+			InterfaceName: "connector.capnp:Dispatcher",
+			MethodName:    "dispatchMessage",
 		},
 	}
 	if params != nil {
 		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		s.PlaceArgs = func(s capnp.Struct) error { return params(Server_send_Params{Struct: s}) }
+		s.PlaceArgs = func(s capnp.Struct) error { return params(Dispatcher_dispatchMessage_Params{Struct: s}) }
 	}
 	ans, release := c.Client.SendCall(ctx, s)
-	return Server_send_Results_Future{Future: ans.Future()}, release
+	return Dispatcher_dispatchMessage_Results_Future{Future: ans.Future()}, release
+}
+func (c Dispatcher) DispatchCommand(ctx context.Context, params func(Dispatcher_dispatchCommand_Params) error) (Dispatcher_dispatchCommand_Results_Future, capnp.ReleaseFunc) {
+	s := capnp.Send{
+		Method: capnp.Method{
+			InterfaceID:   0xa481e3c400456884,
+			MethodID:      1,
+			InterfaceName: "connector.capnp:Dispatcher",
+			MethodName:    "dispatchCommand",
+		},
+	}
+	if params != nil {
+		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
+		s.PlaceArgs = func(s capnp.Struct) error { return params(Dispatcher_dispatchCommand_Params{Struct: s}) }
+	}
+	ans, release := c.Client.SendCall(ctx, s)
+	return Dispatcher_dispatchCommand_Results_Future{Future: ans.Future()}, release
+}
+func (c Dispatcher) DispatchEvent(ctx context.Context, params func(Dispatcher_dispatchEvent_Params) error) (Dispatcher_dispatchEvent_Results_Future, capnp.ReleaseFunc) {
+	s := capnp.Send{
+		Method: capnp.Method{
+			InterfaceID:   0xa481e3c400456884,
+			MethodID:      2,
+			InterfaceName: "connector.capnp:Dispatcher",
+			MethodName:    "dispatchEvent",
+		},
+	}
+	if params != nil {
+		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
+		s.PlaceArgs = func(s capnp.Struct) error { return params(Dispatcher_dispatchEvent_Params{Struct: s}) }
+	}
+	ans, release := c.Client.SendCall(ctx, s)
+	return Dispatcher_dispatchEvent_Results_Future{Future: ans.Future()}, release
 }
 
-func (c Server) AddRef() Server {
-	return Server{
+func (c Dispatcher) AddRef() Dispatcher {
+	return Dispatcher{
 		Client: c.Client.AddRef(),
 	}
 }
 
-func (c Server) Release() {
+func (c Dispatcher) Release() {
 	c.Client.Release()
 }
 
-// A Server_Server is a Server with a local implementation.
-type Server_Server interface {
-	Send(context.Context, Server_send) error
+// A Dispatcher_Server is a Dispatcher with a local implementation.
+type Dispatcher_Server interface {
+	DispatchMessage(context.Context, Dispatcher_dispatchMessage) error
+
+	DispatchCommand(context.Context, Dispatcher_dispatchCommand) error
+
+	DispatchEvent(context.Context, Dispatcher_dispatchEvent) error
 }
 
-// Server_NewServer creates a new Server from an implementation of Server_Server.
-func Server_NewServer(s Server_Server, policy *server.Policy) *server.Server {
+// Dispatcher_NewServer creates a new Server from an implementation of Dispatcher_Server.
+func Dispatcher_NewServer(s Dispatcher_Server, policy *server.Policy) *server.Server {
 	c, _ := s.(server.Shutdowner)
-	return server.New(Server_Methods(nil, s), s, c, policy)
+	return server.New(Dispatcher_Methods(nil, s), s, c, policy)
 }
 
-// Server_ServerToClient creates a new Client from an implementation of Server_Server.
+// Dispatcher_ServerToClient creates a new Client from an implementation of Dispatcher_Server.
 // The caller is responsible for calling Release on the returned Client.
-func Server_ServerToClient(s Server_Server, policy *server.Policy) Server {
-	return Server{Client: capnp.NewClient(Server_NewServer(s, policy))}
+func Dispatcher_ServerToClient(s Dispatcher_Server, policy *server.Policy) Dispatcher {
+	return Dispatcher{Client: capnp.NewClient(Dispatcher_NewServer(s, policy))}
 }
 
-// Server_Methods appends Methods to a slice that invoke the methods on s.
+// Dispatcher_Methods appends Methods to a slice that invoke the methods on s.
 // This can be used to create a more complicated Server.
-func Server_Methods(methods []server.Method, s Server_Server) []server.Method {
+func Dispatcher_Methods(methods []server.Method, s Dispatcher_Server) []server.Method {
 	if cap(methods) == 0 {
-		methods = make([]server.Method, 0, 1)
+		methods = make([]server.Method, 0, 3)
 	}
 
 	methods = append(methods, server.Method{
 		Method: capnp.Method{
-			InterfaceID:   0xfe0af31607f108a8,
+			InterfaceID:   0xa481e3c400456884,
 			MethodID:      0,
-			InterfaceName: "connector.capnp:Server",
-			MethodName:    "send",
+			InterfaceName: "connector.capnp:Dispatcher",
+			MethodName:    "dispatchMessage",
 		},
 		Impl: func(ctx context.Context, call *server.Call) error {
-			return s.Send(ctx, Server_send{call})
+			return s.DispatchMessage(ctx, Dispatcher_dispatchMessage{call})
+		},
+	})
+
+	methods = append(methods, server.Method{
+		Method: capnp.Method{
+			InterfaceID:   0xa481e3c400456884,
+			MethodID:      1,
+			InterfaceName: "connector.capnp:Dispatcher",
+			MethodName:    "dispatchCommand",
+		},
+		Impl: func(ctx context.Context, call *server.Call) error {
+			return s.DispatchCommand(ctx, Dispatcher_dispatchCommand{call})
+		},
+	})
+
+	methods = append(methods, server.Method{
+		Method: capnp.Method{
+			InterfaceID:   0xa481e3c400456884,
+			MethodID:      2,
+			InterfaceName: "connector.capnp:Dispatcher",
+			MethodName:    "dispatchEvent",
+		},
+		Impl: func(ctx context.Context, call *server.Call) error {
+			return s.DispatchEvent(ctx, Dispatcher_dispatchEvent{call})
 		},
 	})
 
 	return methods
 }
 
-// Server_send holds the state for a server call to Server.send.
+// Dispatcher_dispatchMessage holds the state for a server call to Dispatcher.dispatchMessage.
 // See server.Call for documentation.
-type Server_send struct {
+type Dispatcher_dispatchMessage struct {
 	*server.Call
 }
 
 // Args returns the call's arguments.
-func (c Server_send) Args() Server_send_Params {
-	return Server_send_Params{Struct: c.Call.Args()}
+func (c Dispatcher_dispatchMessage) Args() Dispatcher_dispatchMessage_Params {
+	return Dispatcher_dispatchMessage_Params{Struct: c.Call.Args()}
 }
 
 // AllocResults allocates the results struct.
-func (c Server_send) AllocResults() (Server_send_Results, error) {
+func (c Dispatcher_dispatchMessage) AllocResults() (Dispatcher_dispatchMessage_Results, error) {
 	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Server_send_Results{Struct: r}, err
+	return Dispatcher_dispatchMessage_Results{Struct: r}, err
 }
 
-type Server_Receiver struct{ Client *capnp.Client }
-
-// Server_Receiver_TypeID is the unique identifier for the type Server_Receiver.
-const Server_Receiver_TypeID = 0xc75d2aae6f719b2e
-
-func (c Server_Receiver) Receive(ctx context.Context, params func(Server_Receiver_receive_Params) error) (Server_Receiver_receive_Results_Future, capnp.ReleaseFunc) {
-	s := capnp.Send{
-		Method: capnp.Method{
-			InterfaceID:   0xc75d2aae6f719b2e,
-			MethodID:      0,
-			InterfaceName: "connector.capnp:Server.Receiver",
-			MethodName:    "receive",
-		},
-	}
-	if params != nil {
-		s.ArgsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		s.PlaceArgs = func(s capnp.Struct) error { return params(Server_Receiver_receive_Params{Struct: s}) }
-	}
-	ans, release := c.Client.SendCall(ctx, s)
-	return Server_Receiver_receive_Results_Future{Future: ans.Future()}, release
-}
-
-func (c Server_Receiver) AddRef() Server_Receiver {
-	return Server_Receiver{
-		Client: c.Client.AddRef(),
-	}
-}
-
-func (c Server_Receiver) Release() {
-	c.Client.Release()
-}
-
-// A Server_Receiver_Server is a Server_Receiver with a local implementation.
-type Server_Receiver_Server interface {
-	Receive(context.Context, Server_Receiver_receive) error
-}
-
-// Server_Receiver_NewServer creates a new Server from an implementation of Server_Receiver_Server.
-func Server_Receiver_NewServer(s Server_Receiver_Server, policy *server.Policy) *server.Server {
-	c, _ := s.(server.Shutdowner)
-	return server.New(Server_Receiver_Methods(nil, s), s, c, policy)
-}
-
-// Server_Receiver_ServerToClient creates a new Client from an implementation of Server_Receiver_Server.
-// The caller is responsible for calling Release on the returned Client.
-func Server_Receiver_ServerToClient(s Server_Receiver_Server, policy *server.Policy) Server_Receiver {
-	return Server_Receiver{Client: capnp.NewClient(Server_Receiver_NewServer(s, policy))}
-}
-
-// Server_Receiver_Methods appends Methods to a slice that invoke the methods on s.
-// This can be used to create a more complicated Server.
-func Server_Receiver_Methods(methods []server.Method, s Server_Receiver_Server) []server.Method {
-	if cap(methods) == 0 {
-		methods = make([]server.Method, 0, 1)
-	}
-
-	methods = append(methods, server.Method{
-		Method: capnp.Method{
-			InterfaceID:   0xc75d2aae6f719b2e,
-			MethodID:      0,
-			InterfaceName: "connector.capnp:Server.Receiver",
-			MethodName:    "receive",
-		},
-		Impl: func(ctx context.Context, call *server.Call) error {
-			return s.Receive(ctx, Server_Receiver_receive{call})
-		},
-	})
-
-	return methods
-}
-
-// Server_Receiver_receive holds the state for a server call to Server_Receiver.receive.
+// Dispatcher_dispatchCommand holds the state for a server call to Dispatcher.dispatchCommand.
 // See server.Call for documentation.
-type Server_Receiver_receive struct {
+type Dispatcher_dispatchCommand struct {
 	*server.Call
 }
 
 // Args returns the call's arguments.
-func (c Server_Receiver_receive) Args() Server_Receiver_receive_Params {
-	return Server_Receiver_receive_Params{Struct: c.Call.Args()}
+func (c Dispatcher_dispatchCommand) Args() Dispatcher_dispatchCommand_Params {
+	return Dispatcher_dispatchCommand_Params{Struct: c.Call.Args()}
 }
 
 // AllocResults allocates the results struct.
-func (c Server_Receiver_receive) AllocResults() (Server_Receiver_receive_Results, error) {
+func (c Dispatcher_dispatchCommand) AllocResults() (Dispatcher_dispatchCommand_Results, error) {
 	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Server_Receiver_receive_Results{Struct: r}, err
+	return Dispatcher_dispatchCommand_Results{Struct: r}, err
 }
 
-type Server_Receiver_receive_Params struct{ capnp.Struct }
+// Dispatcher_dispatchEvent holds the state for a server call to Dispatcher.dispatchEvent.
+// See server.Call for documentation.
+type Dispatcher_dispatchEvent struct {
+	*server.Call
+}
 
-// Server_Receiver_receive_Params_TypeID is the unique identifier for the type Server_Receiver_receive_Params.
-const Server_Receiver_receive_Params_TypeID = 0xbd4d31a120c0e813
+// Args returns the call's arguments.
+func (c Dispatcher_dispatchEvent) Args() Dispatcher_dispatchEvent_Params {
+	return Dispatcher_dispatchEvent_Params{Struct: c.Call.Args()}
+}
 
-func NewServer_Receiver_receive_Params(s *capnp.Segment) (Server_Receiver_receive_Params, error) {
+// AllocResults allocates the results struct.
+func (c Dispatcher_dispatchEvent) AllocResults() (Dispatcher_dispatchEvent_Results, error) {
+	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return Dispatcher_dispatchEvent_Results{Struct: r}, err
+}
+
+type Dispatcher_dispatchMessage_Params struct{ capnp.Struct }
+
+// Dispatcher_dispatchMessage_Params_TypeID is the unique identifier for the type Dispatcher_dispatchMessage_Params.
+const Dispatcher_dispatchMessage_Params_TypeID = 0xc8965c3c52f5d699
+
+func NewDispatcher_dispatchMessage_Params(s *capnp.Segment) (Dispatcher_dispatchMessage_Params, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Server_Receiver_receive_Params{st}, err
+	return Dispatcher_dispatchMessage_Params{st}, err
 }
 
-func NewRootServer_Receiver_receive_Params(s *capnp.Segment) (Server_Receiver_receive_Params, error) {
+func NewRootDispatcher_dispatchMessage_Params(s *capnp.Segment) (Dispatcher_dispatchMessage_Params, error) {
 	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Server_Receiver_receive_Params{st}, err
+	return Dispatcher_dispatchMessage_Params{st}, err
 }
 
-func ReadRootServer_Receiver_receive_Params(msg *capnp.Message) (Server_Receiver_receive_Params, error) {
+func ReadRootDispatcher_dispatchMessage_Params(msg *capnp.Message) (Dispatcher_dispatchMessage_Params, error) {
 	root, err := msg.Root()
-	return Server_Receiver_receive_Params{root.Struct()}, err
+	return Dispatcher_dispatchMessage_Params{root.Struct()}, err
 }
 
-func (s Server_Receiver_receive_Params) String() string {
-	str, _ := text.Marshal(0xbd4d31a120c0e813, s.Struct)
+func (s Dispatcher_dispatchMessage_Params) String() string {
+	str, _ := text.Marshal(0xc8965c3c52f5d699, s.Struct)
 	return str
 }
 
-func (s Server_Receiver_receive_Params) Message() (capnp.Ptr, error) {
-	return s.Struct.Ptr(0)
+func (s Dispatcher_dispatchMessage_Params) Message() (IncomingMessagePacket, error) {
+	p, err := s.Struct.Ptr(0)
+	return IncomingMessagePacket{Struct: p.Struct()}, err
 }
 
-func (s Server_Receiver_receive_Params) HasMessage() bool {
+func (s Dispatcher_dispatchMessage_Params) HasMessage() bool {
 	return s.Struct.HasPtr(0)
 }
 
-func (s Server_Receiver_receive_Params) SetMessage(v capnp.Ptr) error {
-	return s.Struct.SetPtr(0, v)
+func (s Dispatcher_dispatchMessage_Params) SetMessage(v IncomingMessagePacket) error {
+	return s.Struct.SetPtr(0, v.Struct.ToPtr())
 }
 
-// Server_Receiver_receive_Params_List is a list of Server_Receiver_receive_Params.
-type Server_Receiver_receive_Params_List struct{ capnp.List }
-
-// NewServer_Receiver_receive_Params creates a new list of Server_Receiver_receive_Params.
-func NewServer_Receiver_receive_Params_List(s *capnp.Segment, sz int32) (Server_Receiver_receive_Params_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
-	return Server_Receiver_receive_Params_List{l}, err
-}
-
-func (s Server_Receiver_receive_Params_List) At(i int) Server_Receiver_receive_Params {
-	return Server_Receiver_receive_Params{s.List.Struct(i)}
-}
-
-func (s Server_Receiver_receive_Params_List) Set(i int, v Server_Receiver_receive_Params) error {
-	return s.List.SetStruct(i, v.Struct)
-}
-
-func (s Server_Receiver_receive_Params_List) String() string {
-	str, _ := text.MarshalList(0xbd4d31a120c0e813, s.List)
-	return str
-}
-
-// Server_Receiver_receive_Params_Future is a wrapper for a Server_Receiver_receive_Params promised by a client call.
-type Server_Receiver_receive_Params_Future struct{ *capnp.Future }
-
-func (p Server_Receiver_receive_Params_Future) Struct() (Server_Receiver_receive_Params, error) {
-	s, err := p.Future.Struct()
-	return Server_Receiver_receive_Params{s}, err
-}
-
-func (p Server_Receiver_receive_Params_Future) Message() *capnp.Future {
-	return p.Future.Field(0, nil)
-}
-
-type Server_Receiver_receive_Results struct{ capnp.Struct }
-
-// Server_Receiver_receive_Results_TypeID is the unique identifier for the type Server_Receiver_receive_Results.
-const Server_Receiver_receive_Results_TypeID = 0xf99026af6bfd0405
-
-func NewServer_Receiver_receive_Results(s *capnp.Segment) (Server_Receiver_receive_Results, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Server_Receiver_receive_Results{st}, err
-}
-
-func NewRootServer_Receiver_receive_Results(s *capnp.Segment) (Server_Receiver_receive_Results, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Server_Receiver_receive_Results{st}, err
-}
-
-func ReadRootServer_Receiver_receive_Results(msg *capnp.Message) (Server_Receiver_receive_Results, error) {
-	root, err := msg.Root()
-	return Server_Receiver_receive_Results{root.Struct()}, err
-}
-
-func (s Server_Receiver_receive_Results) String() string {
-	str, _ := text.Marshal(0xf99026af6bfd0405, s.Struct)
-	return str
-}
-
-// Server_Receiver_receive_Results_List is a list of Server_Receiver_receive_Results.
-type Server_Receiver_receive_Results_List struct{ capnp.List }
-
-// NewServer_Receiver_receive_Results creates a new list of Server_Receiver_receive_Results.
-func NewServer_Receiver_receive_Results_List(s *capnp.Segment, sz int32) (Server_Receiver_receive_Results_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0}, sz)
-	return Server_Receiver_receive_Results_List{l}, err
-}
-
-func (s Server_Receiver_receive_Results_List) At(i int) Server_Receiver_receive_Results {
-	return Server_Receiver_receive_Results{s.List.Struct(i)}
-}
-
-func (s Server_Receiver_receive_Results_List) Set(i int, v Server_Receiver_receive_Results) error {
-	return s.List.SetStruct(i, v.Struct)
-}
-
-func (s Server_Receiver_receive_Results_List) String() string {
-	str, _ := text.MarshalList(0xf99026af6bfd0405, s.List)
-	return str
-}
-
-// Server_Receiver_receive_Results_Future is a wrapper for a Server_Receiver_receive_Results promised by a client call.
-type Server_Receiver_receive_Results_Future struct{ *capnp.Future }
-
-func (p Server_Receiver_receive_Results_Future) Struct() (Server_Receiver_receive_Results, error) {
-	s, err := p.Future.Struct()
-	return Server_Receiver_receive_Results{s}, err
-}
-
-type Server_send_Params struct{ capnp.Struct }
-
-// Server_send_Params_TypeID is the unique identifier for the type Server_send_Params.
-const Server_send_Params_TypeID = 0xbfd13bf50e16bafb
-
-func NewServer_send_Params(s *capnp.Segment) (Server_send_Params, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Server_send_Params{st}, err
-}
-
-func NewRootServer_send_Params(s *capnp.Segment) (Server_send_Params, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Server_send_Params{st}, err
-}
-
-func ReadRootServer_send_Params(msg *capnp.Message) (Server_send_Params, error) {
-	root, err := msg.Root()
-	return Server_send_Params{root.Struct()}, err
-}
-
-func (s Server_send_Params) String() string {
-	str, _ := text.Marshal(0xbfd13bf50e16bafb, s.Struct)
-	return str
-}
-
-func (s Server_send_Params) Receiver() Server_Receiver {
-	p, _ := s.Struct.Ptr(0)
-	return Server_Receiver{Client: p.Interface().Client()}
-}
-
-func (s Server_send_Params) HasReceiver() bool {
-	return s.Struct.HasPtr(0)
-}
-
-func (s Server_send_Params) SetReceiver(v Server_Receiver) error {
-	if !v.Client.IsValid() {
-		return s.Struct.SetPtr(0, capnp.Ptr{})
+// NewMessage sets the message field to a newly
+// allocated IncomingMessagePacket struct, preferring placement in s's segment.
+func (s Dispatcher_dispatchMessage_Params) NewMessage() (IncomingMessagePacket, error) {
+	ss, err := NewIncomingMessagePacket(s.Struct.Segment())
+	if err != nil {
+		return IncomingMessagePacket{}, err
 	}
-	seg := s.Segment()
-	in := capnp.NewInterface(seg, seg.Message().AddCap(v.Client))
-	return s.Struct.SetPtr(0, in.ToPtr())
+	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return ss, err
 }
 
-// Server_send_Params_List is a list of Server_send_Params.
-type Server_send_Params_List struct{ capnp.List }
+// Dispatcher_dispatchMessage_Params_List is a list of Dispatcher_dispatchMessage_Params.
+type Dispatcher_dispatchMessage_Params_List struct{ capnp.List }
 
-// NewServer_send_Params creates a new list of Server_send_Params.
-func NewServer_send_Params_List(s *capnp.Segment, sz int32) (Server_send_Params_List, error) {
+// NewDispatcher_dispatchMessage_Params creates a new list of Dispatcher_dispatchMessage_Params.
+func NewDispatcher_dispatchMessage_Params_List(s *capnp.Segment, sz int32) (Dispatcher_dispatchMessage_Params_List, error) {
 	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
-	return Server_send_Params_List{l}, err
+	return Dispatcher_dispatchMessage_Params_List{l}, err
 }
 
-func (s Server_send_Params_List) At(i int) Server_send_Params {
-	return Server_send_Params{s.List.Struct(i)}
+func (s Dispatcher_dispatchMessage_Params_List) At(i int) Dispatcher_dispatchMessage_Params {
+	return Dispatcher_dispatchMessage_Params{s.List.Struct(i)}
 }
 
-func (s Server_send_Params_List) Set(i int, v Server_send_Params) error {
+func (s Dispatcher_dispatchMessage_Params_List) Set(i int, v Dispatcher_dispatchMessage_Params) error {
 	return s.List.SetStruct(i, v.Struct)
 }
 
-func (s Server_send_Params_List) String() string {
-	str, _ := text.MarshalList(0xbfd13bf50e16bafb, s.List)
+func (s Dispatcher_dispatchMessage_Params_List) String() string {
+	str, _ := text.MarshalList(0xc8965c3c52f5d699, s.List)
 	return str
 }
 
-// Server_send_Params_Future is a wrapper for a Server_send_Params promised by a client call.
-type Server_send_Params_Future struct{ *capnp.Future }
+// Dispatcher_dispatchMessage_Params_Future is a wrapper for a Dispatcher_dispatchMessage_Params promised by a client call.
+type Dispatcher_dispatchMessage_Params_Future struct{ *capnp.Future }
 
-func (p Server_send_Params_Future) Struct() (Server_send_Params, error) {
+func (p Dispatcher_dispatchMessage_Params_Future) Struct() (Dispatcher_dispatchMessage_Params, error) {
 	s, err := p.Future.Struct()
-	return Server_send_Params{s}, err
+	return Dispatcher_dispatchMessage_Params{s}, err
 }
 
-func (p Server_send_Params_Future) Receiver() Server_Receiver {
-	return Server_Receiver{Client: p.Future.Field(0, nil).Client()}
+func (p Dispatcher_dispatchMessage_Params_Future) Message() IncomingMessagePacket_Future {
+	return IncomingMessagePacket_Future{Future: p.Future.Field(0, nil)}
 }
 
-type Server_send_Results struct{ capnp.Struct }
+type Dispatcher_dispatchMessage_Results struct{ capnp.Struct }
 
-// Server_send_Results_TypeID is the unique identifier for the type Server_send_Results.
-const Server_send_Results_TypeID = 0xc1c97328201467a0
+// Dispatcher_dispatchMessage_Results_TypeID is the unique identifier for the type Dispatcher_dispatchMessage_Results.
+const Dispatcher_dispatchMessage_Results_TypeID = 0xa77b14a8d0f55c91
 
-func NewServer_send_Results(s *capnp.Segment) (Server_send_Results, error) {
+func NewDispatcher_dispatchMessage_Results(s *capnp.Segment) (Dispatcher_dispatchMessage_Results, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Server_send_Results{st}, err
+	return Dispatcher_dispatchMessage_Results{st}, err
 }
 
-func NewRootServer_send_Results(s *capnp.Segment) (Server_send_Results, error) {
+func NewRootDispatcher_dispatchMessage_Results(s *capnp.Segment) (Dispatcher_dispatchMessage_Results, error) {
 	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return Server_send_Results{st}, err
+	return Dispatcher_dispatchMessage_Results{st}, err
 }
 
-func ReadRootServer_send_Results(msg *capnp.Message) (Server_send_Results, error) {
+func ReadRootDispatcher_dispatchMessage_Results(msg *capnp.Message) (Dispatcher_dispatchMessage_Results, error) {
 	root, err := msg.Root()
-	return Server_send_Results{root.Struct()}, err
+	return Dispatcher_dispatchMessage_Results{root.Struct()}, err
 }
 
-func (s Server_send_Results) String() string {
-	str, _ := text.Marshal(0xc1c97328201467a0, s.Struct)
+func (s Dispatcher_dispatchMessage_Results) String() string {
+	str, _ := text.Marshal(0xa77b14a8d0f55c91, s.Struct)
 	return str
 }
 
-// Server_send_Results_List is a list of Server_send_Results.
-type Server_send_Results_List struct{ capnp.List }
+// Dispatcher_dispatchMessage_Results_List is a list of Dispatcher_dispatchMessage_Results.
+type Dispatcher_dispatchMessage_Results_List struct{ capnp.List }
 
-// NewServer_send_Results creates a new list of Server_send_Results.
-func NewServer_send_Results_List(s *capnp.Segment, sz int32) (Server_send_Results_List, error) {
+// NewDispatcher_dispatchMessage_Results creates a new list of Dispatcher_dispatchMessage_Results.
+func NewDispatcher_dispatchMessage_Results_List(s *capnp.Segment, sz int32) (Dispatcher_dispatchMessage_Results_List, error) {
 	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0}, sz)
-	return Server_send_Results_List{l}, err
+	return Dispatcher_dispatchMessage_Results_List{l}, err
 }
 
-func (s Server_send_Results_List) At(i int) Server_send_Results {
-	return Server_send_Results{s.List.Struct(i)}
+func (s Dispatcher_dispatchMessage_Results_List) At(i int) Dispatcher_dispatchMessage_Results {
+	return Dispatcher_dispatchMessage_Results{s.List.Struct(i)}
 }
 
-func (s Server_send_Results_List) Set(i int, v Server_send_Results) error {
+func (s Dispatcher_dispatchMessage_Results_List) Set(i int, v Dispatcher_dispatchMessage_Results) error {
 	return s.List.SetStruct(i, v.Struct)
 }
 
-func (s Server_send_Results_List) String() string {
-	str, _ := text.MarshalList(0xc1c97328201467a0, s.List)
+func (s Dispatcher_dispatchMessage_Results_List) String() string {
+	str, _ := text.MarshalList(0xa77b14a8d0f55c91, s.List)
 	return str
 }
 
-// Server_send_Results_Future is a wrapper for a Server_send_Results promised by a client call.
-type Server_send_Results_Future struct{ *capnp.Future }
+// Dispatcher_dispatchMessage_Results_Future is a wrapper for a Dispatcher_dispatchMessage_Results promised by a client call.
+type Dispatcher_dispatchMessage_Results_Future struct{ *capnp.Future }
 
-func (p Server_send_Results_Future) Struct() (Server_send_Results, error) {
+func (p Dispatcher_dispatchMessage_Results_Future) Struct() (Dispatcher_dispatchMessage_Results, error) {
 	s, err := p.Future.Struct()
-	return Server_send_Results{s}, err
+	return Dispatcher_dispatchMessage_Results{s}, err
 }
 
-const schema_962b7a64e96c7802 = "x\xda\xbcVkh\x1cU\x14>gfv\xef\xce\xd2" +
-	"\x98\xbd\x9d\xd8\xb5AM\xd4\xa8\xa5\xa5!1\xadB\xd4" +
-	"\xe6Q0i08\xb3\xc5\x1f\x89\x16]7\xd7<\xcc" +
-	"\xee6\xb3\x9b \xa96R-\x1a\x15\xb1JD\xab\xd6" +
-	"\x06Q\xd4\x9a\xa6\xa5\x88P\xf0\x8d/\xa8H\xa3-\xf6" +
-	"\xa7VmK\x15\x09\x12d\xadu\xe4\xde\xd9yd\xbb" +
-	"\x9b\xc4\x1f\xfao\xf7\xde\xef\x9c\xf3\x9ds\xcf\xf9\xce\xd4" +
-	"\xf5\xca\xcdR} ]\x06`\xbc\x14\x08Z\xd3\xfb\xde" +
-	"\xaf\xbamb\xcf\x0e\xa0\x95\xb2\xf5\xd4\x1a\xe5.\xfd\xd4" +
-	"\x86O\x00 \x82\x0d/\x07+Q\x9b\x0a\x12\x00\xed\xcd" +
-	"`\x9b\x96\x0b\x12-\x17,\xb76|<\xd8~\xedC" +
-	"\xe6\x1e\xa0\x95\x08\x10@\x02\xd0\xf0kp\x00\x01\xb5\\" +
-	"\xb0\x09\xd0\x1a\xbd\xa2;\x1c<\xd7\xfe\x8a\x1f\xd0IF" +
-	"9\xa0\x8bp\xc0\xbb\x97'\x1f\xbe\xfdn\xb6\xcf\x06(" +
-	"\xfc~\x8a4\"(\x96\x96\xdb{\x13}\xe1\xc9\xb7\xfd" +
-	"\xa6\x13\xb6\xe9\xa40\xbd\xe3\xbb\xb7.\x8e\xd6\xceN\xfb" +
-	"\x01s$\xc6\x01\x18\xe2\x00\xed\xf4\x87\xd5\x93\xf5\x9d\xef" +
-	"\x01\xad\xb6\x01\x11l\xb8:$<\xd4\x0b\xc0\xb9\xc3+" +
-	".\x9a\xbb\xf1\xe8\x07@\xa3\xae\x07#T)\xd8\x09\xc0" +
-	"\xde\xde\x8a\xeaU\x99/?\xb2\x016\xbb\xd0\x95\x9c\x9d" +
-	"[\x1e\x1a\x91-\xe9\xfe\xc13=\xa3k\x9e\x03@m" +
-	"\"4\xa3M\x86\xa2\x02\xd9\x86\xdaN\x95\x00X'\xff" +
-	"\xbc\xe1d\xdd\xf8\x03\x9f\xfa\xb2L\xaa;\xb8\x9f\xda\x17" +
-	"\x87\xd2\xfbWo\xf9\x1chT\xb6\xde\x08\xcd\x92\x15\xbf" +
-	"\x87\xff\xb6k\xde\xa5J\xa81n\xaf\xc5\xd56\xed\xa0" +
-	"J\xb4\x83j\xb9U\xaf\x9f=\xb4n\xd3\xad_\xfb\xd3" +
-	"~M\xbd\x8e\x93\x9eR9\xe9\xe3\xa7\xa3C\x8f\xfdt" +
-	"\xe7\x8c\x1f\xf0\x95\xda\xcd\x01'\x04\xe0\x8f\x89\xfa#\x03" +
-	"\x8d\xbd?\x00\xbd\xca\xad\xcby\xf5\x19\x0e(\x0bs\xc0" +
-	"\xab\xd7\x1fRW\xf6m\xff\xd1Gwm\xd8\xe4t\x8f" +
-	"=\xbe3\xfc\x8du\xe2\x17\xdbT\xe1\x96+\xc3\xbb\xf9" +
-	"M@9\x7f\xdf\xf45O\xe7\xecb\x8b\x1b5,R" +
-	"d\xbboaOl\xdb\xf5\x97\xcf\xdb\x9c\x9d\xbc\x9bo" +
-	"a\x11\xbfW\x0fkg\xd4(\x806\xa7\xb6i\x97\x85" +
-	"\x09\x1c\xb5\x12\xe9T\x8a%\xb2i\xd9\xacM\xc4\xb7\xa6" +
-	"\xb66n\xcc\x1f\x98\xb51\x96`\xfd#23uD" +
-	"C\x91\x03\x00n\x8e\xe80\xa6\xb4\x15\xa0e\x19\xb6\\" +
-	"\x8at-\x193\x85\x09\xa3Xe(\x12z\xad\x8f\x08" +
-	"P\xf4\xb0\x19u\xc4\x16\x05)\xb6\x8eu\xb2L&\xde" +
-	"\xcb\\J\xca\x85\x94\xd8\x08Ke7gM\x16O\xd6" +
-	"\xe8\xf1r3\x9e\xcc\x18\x8a\xac\x00(<@Y\x07\x80" +
-	"\xb1LF\xa3]B+O\xc5\x04\x00\xa4^P\x1e\xf2" +
-	"\x02&\x9c\\\xd4P\x10\x11u\x191b\x1d\xd9\xde." +
-	"};\xfc\xdbq\x00D\x0a\xb8\x10\xa5\xa4\xcd:O\xaa" +
-	"I\x8f\xffg\xa4\x0eL\x97I\x1bW\xad;PH\xaa" +
-	"\xc8\xd3eX\xaa\xa7&\xd6\xc42\xc3\x83\xd9\xccB\xec" +
-	"\x13\xe9d2\x9e\xea\xf9\x1f\xd8'\x9f\xaf<\xbb_\xeb" +
-	">\xb6\x84\x92\x9a\xac\xb7?\x93ef\x8d\xa0\x83\xf3\xf8" +
-	"\x0c\xe4\xf9\\\"\xf8p\x9c\x19\x87\xf2l\x7f:\x85\x11" +
-	"\xeb\x8b\x99\x9f'\xf4\xaeS\xcf\xf2\x18\x91b163" +
-	"s\x849\x9d\xcdx$\xf1\xa3X\xe2\xad\x00FHF" +
-	"\xa3B\xc2\xb1\xfc\x1b\xe3rDOZ\x00py\xb1W" +
-	"\xc8\xc7\x10O\xc0\xdd\xcaK-\xa8\xcf\xb3WP\xdf\xe1" +
-	"\xbfm\x07?\x91\x18\xcb\x0c\x13\x7f/H\x85eG\x93" +
-	";\xf7m+\xec\xb0b\x1e?\xa3B\x08\x80\xb3\x1d\xd0" +
-	"\x91C\xba\xab\x03$:N\x10]\x09Eg\xfb\xd0\x07" +
-	"W\x83D\x87\x08J\xee\xc6BG\xb6(3A\xa2[" +
-	"\x08\xca\xeeJBG\xcf\xa9\xc1\xef6\x11T\xdcU\x88" +
-	"\x8ex\xd2\x9b\xef\x01\x89\xae'\x96\xd3$\xa2Z\xe5<" +
-	"\xc9f\xb4\x9ca\x84*\xd1\xd0\xcd\xbc*v\x83{'" +
-	"\x8e\x86\x00\x11\xffu\xf4J\xa7.6 1{\xa2 " +
-	"\xe1\xdd\x17\xeb+\xf0\x14\xd3\xd9\x96\xe8(\xf9\xc2\x8a\xe9" +
-	">\xb7_1\xe7\x1d.\xa4\x98\xa5\x94@\xafZR{" +
-	"G\xac\xc6h\x9d\xf2\xe8#\xaf\xcf\x96\x1c\xa0\"C*" +
-	"j\"gKNi\"\x9d\xba\xb7\xdfLzS\xfa\xd9" +
-	"\xb6\xf5J_\xdf;\xe3\x85A\x02\xa5V\x90oP\x8b" +
-	"(B\xa9A\xf5I\xd1\xbcA]d\xad\xc4X\xd5|" +
-	"\xd5\\\x0a-\xa7\x06\xaeQ\xd9b\x8aS\xaa\x93J-" +
-	"\x96R\xf8&;\x80\x98]\xef\xab\xa7`v\xedVt" +
-	"\xbe\xcb\xd0\xf9\xfe\xa2\x94\xcfg\x80\xe4\xa7GG\xfc'" +
-	"\x00\x00\xff\xffG}2B"
+type Dispatcher_dispatchCommand_Params struct{ capnp.Struct }
+
+// Dispatcher_dispatchCommand_Params_TypeID is the unique identifier for the type Dispatcher_dispatchCommand_Params.
+const Dispatcher_dispatchCommand_Params_TypeID = 0x86804ed23d208254
+
+func NewDispatcher_dispatchCommand_Params(s *capnp.Segment) (Dispatcher_dispatchCommand_Params, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return Dispatcher_dispatchCommand_Params{st}, err
+}
+
+func NewRootDispatcher_dispatchCommand_Params(s *capnp.Segment) (Dispatcher_dispatchCommand_Params, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return Dispatcher_dispatchCommand_Params{st}, err
+}
+
+func ReadRootDispatcher_dispatchCommand_Params(msg *capnp.Message) (Dispatcher_dispatchCommand_Params, error) {
+	root, err := msg.Root()
+	return Dispatcher_dispatchCommand_Params{root.Struct()}, err
+}
+
+func (s Dispatcher_dispatchCommand_Params) String() string {
+	str, _ := text.Marshal(0x86804ed23d208254, s.Struct)
+	return str
+}
+
+func (s Dispatcher_dispatchCommand_Params) Command() (CommandPacket, error) {
+	p, err := s.Struct.Ptr(0)
+	return CommandPacket{Struct: p.Struct()}, err
+}
+
+func (s Dispatcher_dispatchCommand_Params) HasCommand() bool {
+	return s.Struct.HasPtr(0)
+}
+
+func (s Dispatcher_dispatchCommand_Params) SetCommand(v CommandPacket) error {
+	return s.Struct.SetPtr(0, v.Struct.ToPtr())
+}
+
+// NewCommand sets the command field to a newly
+// allocated CommandPacket struct, preferring placement in s's segment.
+func (s Dispatcher_dispatchCommand_Params) NewCommand() (CommandPacket, error) {
+	ss, err := NewCommandPacket(s.Struct.Segment())
+	if err != nil {
+		return CommandPacket{}, err
+	}
+	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return ss, err
+}
+
+// Dispatcher_dispatchCommand_Params_List is a list of Dispatcher_dispatchCommand_Params.
+type Dispatcher_dispatchCommand_Params_List struct{ capnp.List }
+
+// NewDispatcher_dispatchCommand_Params creates a new list of Dispatcher_dispatchCommand_Params.
+func NewDispatcher_dispatchCommand_Params_List(s *capnp.Segment, sz int32) (Dispatcher_dispatchCommand_Params_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
+	return Dispatcher_dispatchCommand_Params_List{l}, err
+}
+
+func (s Dispatcher_dispatchCommand_Params_List) At(i int) Dispatcher_dispatchCommand_Params {
+	return Dispatcher_dispatchCommand_Params{s.List.Struct(i)}
+}
+
+func (s Dispatcher_dispatchCommand_Params_List) Set(i int, v Dispatcher_dispatchCommand_Params) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s Dispatcher_dispatchCommand_Params_List) String() string {
+	str, _ := text.MarshalList(0x86804ed23d208254, s.List)
+	return str
+}
+
+// Dispatcher_dispatchCommand_Params_Future is a wrapper for a Dispatcher_dispatchCommand_Params promised by a client call.
+type Dispatcher_dispatchCommand_Params_Future struct{ *capnp.Future }
+
+func (p Dispatcher_dispatchCommand_Params_Future) Struct() (Dispatcher_dispatchCommand_Params, error) {
+	s, err := p.Future.Struct()
+	return Dispatcher_dispatchCommand_Params{s}, err
+}
+
+func (p Dispatcher_dispatchCommand_Params_Future) Command() CommandPacket_Future {
+	return CommandPacket_Future{Future: p.Future.Field(0, nil)}
+}
+
+type Dispatcher_dispatchCommand_Results struct{ capnp.Struct }
+
+// Dispatcher_dispatchCommand_Results_TypeID is the unique identifier for the type Dispatcher_dispatchCommand_Results.
+const Dispatcher_dispatchCommand_Results_TypeID = 0x8ee83195118880ed
+
+func NewDispatcher_dispatchCommand_Results(s *capnp.Segment) (Dispatcher_dispatchCommand_Results, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return Dispatcher_dispatchCommand_Results{st}, err
+}
+
+func NewRootDispatcher_dispatchCommand_Results(s *capnp.Segment) (Dispatcher_dispatchCommand_Results, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return Dispatcher_dispatchCommand_Results{st}, err
+}
+
+func ReadRootDispatcher_dispatchCommand_Results(msg *capnp.Message) (Dispatcher_dispatchCommand_Results, error) {
+	root, err := msg.Root()
+	return Dispatcher_dispatchCommand_Results{root.Struct()}, err
+}
+
+func (s Dispatcher_dispatchCommand_Results) String() string {
+	str, _ := text.Marshal(0x8ee83195118880ed, s.Struct)
+	return str
+}
+
+// Dispatcher_dispatchCommand_Results_List is a list of Dispatcher_dispatchCommand_Results.
+type Dispatcher_dispatchCommand_Results_List struct{ capnp.List }
+
+// NewDispatcher_dispatchCommand_Results creates a new list of Dispatcher_dispatchCommand_Results.
+func NewDispatcher_dispatchCommand_Results_List(s *capnp.Segment, sz int32) (Dispatcher_dispatchCommand_Results_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0}, sz)
+	return Dispatcher_dispatchCommand_Results_List{l}, err
+}
+
+func (s Dispatcher_dispatchCommand_Results_List) At(i int) Dispatcher_dispatchCommand_Results {
+	return Dispatcher_dispatchCommand_Results{s.List.Struct(i)}
+}
+
+func (s Dispatcher_dispatchCommand_Results_List) Set(i int, v Dispatcher_dispatchCommand_Results) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s Dispatcher_dispatchCommand_Results_List) String() string {
+	str, _ := text.MarshalList(0x8ee83195118880ed, s.List)
+	return str
+}
+
+// Dispatcher_dispatchCommand_Results_Future is a wrapper for a Dispatcher_dispatchCommand_Results promised by a client call.
+type Dispatcher_dispatchCommand_Results_Future struct{ *capnp.Future }
+
+func (p Dispatcher_dispatchCommand_Results_Future) Struct() (Dispatcher_dispatchCommand_Results, error) {
+	s, err := p.Future.Struct()
+	return Dispatcher_dispatchCommand_Results{s}, err
+}
+
+type Dispatcher_dispatchEvent_Params struct{ capnp.Struct }
+
+// Dispatcher_dispatchEvent_Params_TypeID is the unique identifier for the type Dispatcher_dispatchEvent_Params.
+const Dispatcher_dispatchEvent_Params_TypeID = 0xf4492dbdc8d5803b
+
+func NewDispatcher_dispatchEvent_Params(s *capnp.Segment) (Dispatcher_dispatchEvent_Params, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return Dispatcher_dispatchEvent_Params{st}, err
+}
+
+func NewRootDispatcher_dispatchEvent_Params(s *capnp.Segment) (Dispatcher_dispatchEvent_Params, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return Dispatcher_dispatchEvent_Params{st}, err
+}
+
+func ReadRootDispatcher_dispatchEvent_Params(msg *capnp.Message) (Dispatcher_dispatchEvent_Params, error) {
+	root, err := msg.Root()
+	return Dispatcher_dispatchEvent_Params{root.Struct()}, err
+}
+
+func (s Dispatcher_dispatchEvent_Params) String() string {
+	str, _ := text.Marshal(0xf4492dbdc8d5803b, s.Struct)
+	return str
+}
+
+func (s Dispatcher_dispatchEvent_Params) Event() (UserPacket, error) {
+	p, err := s.Struct.Ptr(0)
+	return UserPacket{Struct: p.Struct()}, err
+}
+
+func (s Dispatcher_dispatchEvent_Params) HasEvent() bool {
+	return s.Struct.HasPtr(0)
+}
+
+func (s Dispatcher_dispatchEvent_Params) SetEvent(v UserPacket) error {
+	return s.Struct.SetPtr(0, v.Struct.ToPtr())
+}
+
+// NewEvent sets the event field to a newly
+// allocated UserPacket struct, preferring placement in s's segment.
+func (s Dispatcher_dispatchEvent_Params) NewEvent() (UserPacket, error) {
+	ss, err := NewUserPacket(s.Struct.Segment())
+	if err != nil {
+		return UserPacket{}, err
+	}
+	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return ss, err
+}
+
+// Dispatcher_dispatchEvent_Params_List is a list of Dispatcher_dispatchEvent_Params.
+type Dispatcher_dispatchEvent_Params_List struct{ capnp.List }
+
+// NewDispatcher_dispatchEvent_Params creates a new list of Dispatcher_dispatchEvent_Params.
+func NewDispatcher_dispatchEvent_Params_List(s *capnp.Segment, sz int32) (Dispatcher_dispatchEvent_Params_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
+	return Dispatcher_dispatchEvent_Params_List{l}, err
+}
+
+func (s Dispatcher_dispatchEvent_Params_List) At(i int) Dispatcher_dispatchEvent_Params {
+	return Dispatcher_dispatchEvent_Params{s.List.Struct(i)}
+}
+
+func (s Dispatcher_dispatchEvent_Params_List) Set(i int, v Dispatcher_dispatchEvent_Params) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s Dispatcher_dispatchEvent_Params_List) String() string {
+	str, _ := text.MarshalList(0xf4492dbdc8d5803b, s.List)
+	return str
+}
+
+// Dispatcher_dispatchEvent_Params_Future is a wrapper for a Dispatcher_dispatchEvent_Params promised by a client call.
+type Dispatcher_dispatchEvent_Params_Future struct{ *capnp.Future }
+
+func (p Dispatcher_dispatchEvent_Params_Future) Struct() (Dispatcher_dispatchEvent_Params, error) {
+	s, err := p.Future.Struct()
+	return Dispatcher_dispatchEvent_Params{s}, err
+}
+
+func (p Dispatcher_dispatchEvent_Params_Future) Event() UserPacket_Future {
+	return UserPacket_Future{Future: p.Future.Field(0, nil)}
+}
+
+type Dispatcher_dispatchEvent_Results struct{ capnp.Struct }
+
+// Dispatcher_dispatchEvent_Results_TypeID is the unique identifier for the type Dispatcher_dispatchEvent_Results.
+const Dispatcher_dispatchEvent_Results_TypeID = 0xaffe75e95d5a72c9
+
+func NewDispatcher_dispatchEvent_Results(s *capnp.Segment) (Dispatcher_dispatchEvent_Results, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return Dispatcher_dispatchEvent_Results{st}, err
+}
+
+func NewRootDispatcher_dispatchEvent_Results(s *capnp.Segment) (Dispatcher_dispatchEvent_Results, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return Dispatcher_dispatchEvent_Results{st}, err
+}
+
+func ReadRootDispatcher_dispatchEvent_Results(msg *capnp.Message) (Dispatcher_dispatchEvent_Results, error) {
+	root, err := msg.Root()
+	return Dispatcher_dispatchEvent_Results{root.Struct()}, err
+}
+
+func (s Dispatcher_dispatchEvent_Results) String() string {
+	str, _ := text.Marshal(0xaffe75e95d5a72c9, s.Struct)
+	return str
+}
+
+// Dispatcher_dispatchEvent_Results_List is a list of Dispatcher_dispatchEvent_Results.
+type Dispatcher_dispatchEvent_Results_List struct{ capnp.List }
+
+// NewDispatcher_dispatchEvent_Results creates a new list of Dispatcher_dispatchEvent_Results.
+func NewDispatcher_dispatchEvent_Results_List(s *capnp.Segment, sz int32) (Dispatcher_dispatchEvent_Results_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0}, sz)
+	return Dispatcher_dispatchEvent_Results_List{l}, err
+}
+
+func (s Dispatcher_dispatchEvent_Results_List) At(i int) Dispatcher_dispatchEvent_Results {
+	return Dispatcher_dispatchEvent_Results{s.List.Struct(i)}
+}
+
+func (s Dispatcher_dispatchEvent_Results_List) Set(i int, v Dispatcher_dispatchEvent_Results) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s Dispatcher_dispatchEvent_Results_List) String() string {
+	str, _ := text.MarshalList(0xaffe75e95d5a72c9, s.List)
+	return str
+}
+
+// Dispatcher_dispatchEvent_Results_Future is a wrapper for a Dispatcher_dispatchEvent_Results promised by a client call.
+type Dispatcher_dispatchEvent_Results_Future struct{ *capnp.Future }
+
+func (p Dispatcher_dispatchEvent_Results_Future) Struct() (Dispatcher_dispatchEvent_Results, error) {
+	s, err := p.Future.Struct()
+	return Dispatcher_dispatchEvent_Results{s}, err
+}
+
+const schema_962b7a64e96c7802 = "x\xda\x94S]H\x14Q\x14>gf\xee\xac\x84\xe2" +
+	"^\xc60\x0c\xb3\xa0 \x93\x16\xd7\xf4\xc5Z]2!" +
+	"#cG\xea!SjYo\xee\x86\xb3\xab3kD" +
+	"F\x99IZ\x0fB\x85R\xbd\x05\xd1/\xb4BHO" +
+	"=DQ\x0aA\xb9\xa4T\xafQ*\x12!$\xbd5" +
+	"qgwtX\xb3\xdc\xb7\xe1\x9e\xef|\xe7;\xdfw" +
+	"\xa6\xbcF\xf0\x0b^\x92X\x07\xa0\x9e#\xb2y\xb8o" +
+	"\xb3/y\xa8\xf72\xd0\x8d\x08@\xd0\x05\xb0\xcbG\xae" +
+	"#\xa0\xd2Hj\x01\xcd\xef\xbd\x83t\xd8;;\x94\x02" +
+	"H\xbc\xae\x91\xdb\x08\xd2\xaf\xfep\xfd\xab/\x17\xefR" +
+	"\xb7h\x0ag:\xe6\xda\xce\x96\x8d\x00\xa0\xd2J>+" +
+	"\x11\xe2\x02P\x18y\xa3\xcc\xf1/\xf3Z\xcb\xe2\xfb\x07" +
+	"\x05=\xf7\x1d$\x93\x16\x89\xf9l\x93v\xe9\xc8\x09\xf6" +
+	"\x18h\x91]yA\xaay\xe5\xd8\xc7G\xeb\x0b=\x0b" +
+	"\x89T%\xa5\xec!i\xe2\xca\xc6,e\x13zs\xeb" +
+	"\\\xf7\xef\x84\x83\xf4\x13\xb9\xca[\x87\xca\xa4\xe3\x81\x99" +
+	"\x9a\x97\x90\xa9m\x82$\x95)K\xdb$\x19P\xb6\xc9" +
+	"\\\xdb\xad\xe9\xc5\xa6=-#\xe3N\x07\xf2d\xcb\x81" +
+	"b\x99\xcf\xf1\x06\xe6\x9fV6\x1c|\xe7\x14\xe2\x93+" +
+	"8\xa0\xde\x02L\xcf\x16v\x0d~mI:\x01Ln" +
+	"\xe6\x80.\x0b\xb0\xbbwj\xfc\xf9\xce\x86\x9f\xce\x11\xc3" +
+	"r\x1f\x07\xdc\x91k!i\x86b\xd1(\x0b\xc5cD" +
+	"\xf7\x84\x82\x9d\xd1\xce\xea}\x11\xa33\x18\x0f\x85\x99\xee" +
+	"iK\x7f\xd6\xc54-\x18m\xdb\x1a\x08\xeaA\x0d\x0d" +
+	"U\x12%\x00\x09\x01h\xde^\x005GD\xb5@\xc0" +
+	"\x0b\xa1\x14\x0c\xdd\xa6v\xb3h\xfe\x89\xd2<\x05\x80\xe8" +
+	"\x06\xccjH\x133\xba;\xc4\xb8\xb1\xd4$d6\x89" +
+	"L\x0f \xaa\xb9\"qx\x88v\xd0T\xed\x03\x816" +
+	"\xb8\x10\x97.\x0c\xedK\xa2>^\xabr\xa1\xb0d\x0c" +
+	"\xdaY\xd2R\x1d\x04\xba\xc5e\xda\x82\xb0\x91\x19F\xb0" +
+	"\x9d\x81\x1f\x97\xdf\xd2*\x9doPR\x7f\x9aE\xe3~" +
+	"\x0c\xe0\xda6M\xf3\xae\xdcT\xb4\x9b\xea\xd2\x0f\xba\xc7" +
+	"`\xdc\x92Z\x8et\x00\xa5\x95@\x9d\xb5G\x8c8\xd3" +
+	"\xff\x16\xd2)\x005WDu\x83\x80f\x0a\xa7\x07!" +
+	"?\x1e\x89E\xd1m\x8e'\xbf\x0d\x07\x8e\xce\xdc\xc8&" +
+	"+k\xe1\x94\xfe\xb8\x01\xb02*[\x17ZI\xe5X" +
+	"I\xd9\x7f\x15\xdaGK\xbd\x07@\xa0\xa5<)\xfb\xd0" +
+	"\xd1\xfe)i\xf1\x0e\x10(u\x99\xf6^\x00\xe0\xc7|" +
+	"nG\xf6F\xff\xe7n\xb5\x14\x0c\xdd\xe6h\"O\xa8" +
+	"\xdb^9\x9a\xe9\xc5j\xc1\x04J8\xf3\x1a\x88\xab\x0b" +
+	"\xcb\xa5\x81\xfe{\x0b\x99\xc4\xff\x0a\xd2>\x8f\xd5\x92\x0c" +
+	"\xc5\xa2'#\xba\xb6\x9c\xe4\xeb\x9e*)\x1c\x1e\xbb\x92" +
+	"}\x92\x96A\x068'U,\xefQ\xc28\x08\xdd\xe6" +
+	"\xdb\xf3\xfb\x85\x0f\xdd?\xa6\xd3\x03\xfe\x04\x00\x00\xff\xff" +
+	"\xe7\x9b\xc8\x7f"
 
 func init() {
 	schemas.Register(schema_962b7a64e96c7802,
-		0x829e954f1fbeabaf,
-		0x9e728027486cc23e,
-		0x9f48fb060a5a217a,
+		0x86804ed23d208254,
+		0x8ee83195118880ed,
+		0xa481e3c400456884,
+		0xa77b14a8d0f55c91,
 		0xab656055836d1eb7,
-		0xac8c99113ca0f913,
 		0xaff12e1715aad85b,
-		0xbd4d31a120c0e813,
-		0xbfd13bf50e16bafb,
-		0xc1c97328201467a0,
+		0xaffe75e95d5a72c9,
 		0xc33ee7505f042b8e,
-		0xc57c8930e337fae3,
-		0xc75d2aae6f719b2e,
+		0xc8965c3c52f5d699,
 		0xcf4c4934b3eb5031,
 		0xd25ce5887117e8d6,
-		0xe2673a6acc3195f7,
-		0xe47e681909b336a3,
-		0xecd9ffd30a858ad5,
-		0xf99026af6bfd0405,
-		0xfc917b8b65469a65,
-		0xfe0af31607f108a8)
+		0xf4492dbdc8d5803b)
 }
