@@ -416,7 +416,15 @@ func MapDTOToUser(recipient User) *domain.User {
 	if err != nil {
 		return nil
 	}
-	return domain.NewUser(nick, id, MapToRole(recipient.Role()))
+	role := MapToRole(recipient.Role())
+	if recipient.HasJoinedAt() {
+		joinedAt, err := recipient.JoinedAt()
+		if err != nil {
+			return nil
+		}
+		return domain.NewOnlineUser(nick, id, role, time.UnixMilli(int64(joinedAt.Milliseconds())))
+	}
+	return domain.NewUser(nick, id, role)
 }
 
 func MapDTOToConfirmationMessage(packet ConfirmationPacket) *domain.ConfirmationMessage {
