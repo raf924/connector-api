@@ -3,7 +3,7 @@ package connector
 import (
 	"capnproto.org/go/capnp/v3"
 	"fmt"
-	"github.com/raf924/bot/pkg/domain"
+	"github.com/raf924/connector-sdk/domain"
 	"log"
 	"time"
 )
