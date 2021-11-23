@@ -1,4 +1,4 @@
-module github.com/raf924/connector-api
+module github.com/raf924/connector-api/v2
 
 go 1.17
 
